@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PL-300 Cert Prep: Class 3 - DAX Fundamentals & Patterns</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Visualization & Content Choices: 
+        - DAX Core Concepts: Goal: Refresh understanding. Method: Grid of clickable cards for Calc Columns/Measures, Evaluation Context, Implicit/Explicit Measures. Lib: HTML/CSS/JS. Content expanded.
+        - Essential DAX Functions: Goal: Detail key functions. Method: Grid of clickable cards for Aggregators, Iterators, CALCULATE, Filter functions. Lib: HTML/CSS/JS. Content expanded.
+        - Time Intelligence: Goal: Explain time functions. Method: Grid of clickable cards for TOTALYTD/SAMEPERIODLASTYEAR/DATEADD, and prerequisites. Lib: HTML/CSS/JS. Content expanded.
+        - Footer: Static content.
+        - No charts needed; focus on interactive text. All AI features removed. Layout consistent with enhanced Class 1.
+    -->
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #f1f5f9; /* slate-100 */
+        }
+        .container {
+            max-width: 1200px;
+        }
+        .section-title { 
+            font-size: 2rem; 
+            font-weight: 700; 
+            margin-bottom: 1rem; 
+            color: #0284c7; /* sky-600 */
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #0ea5e9; /* sky-500 */
+            display: inline-block;
+        }
+        .section-intro-text { 
+            margin-bottom: 2rem; 
+            color: #475569; /* slate-600 */
+            font-size: 1.125rem; /* text-lg */
+            line-height: 1.75;
+        }
+        
+        .sub-topic-grid { 
+            display: grid; 
+            gap: 1.5rem; /* gap-6 */
+        }
+        
+        .sub-topic-card { 
+            background-color: white; 
+            border-radius: 0.75rem; /* rounded-xl */
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.05);
+            padding: 1.5rem; /* p-6 */
+            border: 1px solid #e2e8f0; /* slate-200 */
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .sub-topic-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.07), 0 4px 6px -4px rgba(0,0,0,0.07);
+        }
+        .sub-topic-card-title { 
+            font-size: 1.25rem; /* text-xl */
+            font-weight: 600; 
+            color: #075985; /* sky-800 */
+            margin-bottom: 0.5rem; /* mb-2 */
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .sub-topic-card-title::after {
+            content: '▼'; 
+            font-size: 0.8em;
+            color: #94a3b8; /* slate-400 */
+            transition: transform 0.3s ease;
+        }
+        .sub-topic-card.active-item .sub-topic-card-title::after {
+            transform: rotate(180deg); 
+        }
+         .sub-topic-card.active-item {
+            border-left: 5px solid #0ea5e9; /* sky-500 */
+            background-color: #f7fafc; 
+        }
+        .details-content { 
+            display: none; 
+            margin-top: 1rem; /* mt-4 */
+            padding: 1.25rem; /* p-5 */
+            background-color: #f8fafc; /* slate-50 */
+            border-radius: 0.5rem; /* rounded-lg */
+            border: 1px solid #e2e8f0; /* slate-200 */
+            color: #334155; /* slate-700 */
+            line-height: 1.6;
+        }
+        .details-content p, .details-content ul {
+            margin-bottom: 0.75rem; /* mb-3 */
+        }
+        .details-content ul {
+            list-style-position: inside;
+            padding-left: 0.5rem; /* pl-2 */
+        }
+        .details-content strong {
+            color: #0369a1; /* sky-700 */
+        }
+        .details-content .code-example {
+            background-color: #e0f2fe; /* sky-100 */
+            padding: 0.75rem;
+            border-radius: 0.375rem; /* rounded-md */
+            margin-top: 0.5rem;
+            border-left: 3px solid #0ea5e9; /* sky-500 */
+        }
+
+        .exam-tip { 
+            background-color: #e0f2fe; 
+            border-left: 5px solid #0ea5e9; 
+            padding: 1.25rem; 
+            margin-top: 1.5rem; 
+            border-radius: 0.5rem; 
+            color: #0c4a6e; 
+        }
+        .exam-tip p:last-child { margin-bottom: 0; }
+        .exam-tip strong { color: #0369a1; }
+
+
+        .nav-link { transition: color 0.3s, border-bottom-color 0.3s; padding-bottom: 0.25rem; }
+        .nav-link:hover { color: #0ea5e9; border-bottom: 2px solid #0ea5e9; }
+        .content-section { padding-top: 5rem; margin-top: -4.5rem; } 
+        .code-snippet { 
+            background-color: #e2e8f0; 
+            color: #1e293b; 
+            padding: 0.25rem 0.5rem; 
+            border-radius: 0.25rem; 
+            font-family: 'Courier New', Courier, monospace; 
+            font-size: 0.9em; 
+            border: 1px solid #cbd5e1; 
+        }
+        .header-main {
+             background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%); 
+             padding: 2rem 0;
+             margin-bottom: 3rem; 
+             border-bottom-left-radius: 1rem;
+             border-bottom-right-radius: 1rem;
+        }
+        .header-main h1 {
+            color: white;
+            font-size: 2.5rem; 
+        }
+         .header-main p {
+            color: #e0f2fe; 
+            font-size: 1.125rem; 
+        }
+        .intro-card {
+            border-left: 5px solid #0ea5e9;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800">
+
+    <nav class="bg-white shadow-lg fixed w-full z-20 top-0">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" class="text-2xl font-bold text-sky-700">PL-300 Prep: Class 3</a>
+            <div class="space-x-1 sm:space-x-2 md:space-x-3 text-xs sm:text-sm md:text-base">
+                <a href="#dax-core" class="nav-link text-slate-700">DAX Core</a>
+                <a href="#dax-functions" class="nav-link text-slate-700">Functions</a>
+                <a href="#time-intelligence" class="nav-link text-slate-700">Time Intel</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="header-main">
+        <div class="container mx-auto px-6 text-center">
+            <h1 class="font-bold">DAX Fundamentals & Common Patterns 📊</h1>
+            <p class="mt-2">Interactive Guide for PL-300 Certification - Session 3</p>
+        </div>
+    </div>
+
+    <div class="container mx-auto px-6 py-8">
+
+        <section id="introduction-pl300-class3" class="mb-12 card intro-card">
+             <h2 class="section-title" style="font-size: 1.75rem; margin-bottom: 1rem; border-bottom: none; display: block;">Welcome to Session 3!</h2>
+             <p class="mb-4 text-slate-700 leading-relaxed">Now that we've covered data preparation and modeling, this session dives into Data Analysis Expressions (DAX). DAX is the formula language used in Power BI to create custom calculations. Understanding its core concepts and common functions is essential for unlocking deeper insights from your data.</p>
+             <p class="font-semibold text-slate-700">Today's Focus (30 mins):</p>
+             <ul class="list-disc list-inside ml-4 space-y-1 text-slate-600">
+                <li>DAX Core Concepts (Refresher): Calculated columns vs. Measures, Evaluation Context.</li>
+                <li>Essential DAX Functions: Aggregators, Iterators, CALCULATE, Filter functions.</li>
+                <li>Time Intelligence Functions and their prerequisites.</li>
+             </ul>
+             <p class="mt-4 font-semibold text-sky-600">Let's start calculating with DAX!</p>
+        </section>
+
+        <section id="dax-core" class="content-section mb-16">
+            <h2 class="section-title">DAX Core Concepts (Refresher)</h2>
+            <p class="section-intro-text">A solid grasp of these fundamental DAX concepts is critical, even for knowledgeable users, as they underpin all DAX calculations.</p>
+            <div class="sub-topic-grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title">Calculated Columns vs. Measures</h4>
+                    <div class="details-content text-sm">
+                        <p><strong>Calculated Columns:</strong></p>
+                        <ul>
+                            <li>Extend a table by adding a new column. The formula is evaluated row by row during data refresh (or when the column is created).</li>
+                            <li>Values are stored in the model, consuming memory.</li>
+                            <li>Operate in a <strong>Row Context</strong> by default.</li>
+                            <li><strong>Use Cases:</strong> Creating static attributes for filtering/slicing (e.g., price categories), performing row-level calculations that need to be materialized.</li>
+                            <li>Example: <code class="code-snippet">Product[UnitPriceCategory] = IF(Product[UnitPrice] < 10, "Low", "High")</code></li>
+                        </ul>
+                        <p class="mt-2"><strong>Measures (Calculated Fields):</strong></p>
+                        <ul>
+                            <li>Perform calculations on demand, typically aggregations, based on the current filter context in a report visual.</li>
+                            <li>Results are NOT stored in the model; they are calculated at query time.</li>
+                            <li>Operate in a <strong>Filter Context</strong> by default.</li>
+                            <li><strong>Use Cases:</strong> Dynamic calculations that respond to user interactions (slicers, filters), aggregations (Total Sales, Average Price).</li>
+                            <li>Example: <code class="code-snippet">Total Sales = SUM(Sales[SalesAmount])</code></li>
+                        </ul>
+                        <p><strong>Key Difference:</strong> Calculated columns are computed at refresh and add data to your table. Measures are computed at query time and are dynamic.</p>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title">Evaluation Context: Row vs. Filter</h4>
+                    <div class="details-content text-sm">
+                        <p>Evaluation context determines how DAX formulas are calculated.</p>
+                        <p><strong>Row Context:</strong></p>
+                        <ul>
+                            <li>Exists during the evaluation of a calculated column or within an iterator function (like <code class="code-snippet">SUMX</code>).</li>
+                            <li>It means "the current row." The DAX engine iterates through each row of a table one by one.</li>
+                            <li>Inside a row context, you can directly refer to values from other columns in that same current row.</li>
+                        </ul>
+                        <p class="mt-2"><strong>Filter Context:</strong></p>
+                        <ul>
+                            <li>Exists when a measure is evaluated in a visual or any DAX query.</li>
+                            <li>It's the set of filters applied to the data model *before* the measure is calculated. These filters come from rows/columns in visuals, slicers, other measures, report/page/visual level filters.</li>
+                            <li>The measure "sees" only the subset of data that passes all active filters.</li>
+                            <li>The <code class="code-snippet">CALCULATE</code> function is the primary tool for manipulating the filter context.</li>
+                        </ul>
+                        <p>Understanding context transition (when row context becomes filter context, e.g., referencing a measure in a calculated column) is an advanced but important topic.</p>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title">Implicit vs. Explicit Measures</h4>
+                    <div class="details-content text-sm">
+                        <p><strong>Implicit Measures:</strong></p>
+                        <ul>
+                            <li>Created automatically by Power BI when you drag a numeric field into the "Values" area of a visual.</li>
+                            <li>Power BI applies a default aggregation (Sum, Average, Count, etc.).</li>
+                            <li><strong>Convenient for quick exploration but have limitations:</strong> Cannot be reused easily in other measures, limited formatting options, harder to manage complex logic.</li>
+                        </ul>
+                        <p class="mt-2"><strong>Explicit Measures:</strong></p>
+                        <ul>
+                            <li>Created by you using a DAX formula (e.g., <code class="code-snippet">Total Revenue = SUM(Sales[Revenue])</code>).</li>
+                            <li>Stored in the Fields pane with a calculator icon.</li>
+                            <li><strong>Highly recommended best practice:</strong>
+                                <ul>
+                                    <li>Reusable across multiple visuals and other measures.</li>
+                                    <li>Full control over the DAX logic and formatting.</li>
+                                    <li>Easier to debug and maintain.</li>
+                                    <li>Necessary for any non-trivial calculation.</li>
+                                </ul>
+                            </li>
+                        </ul>
+                        <p>Always aim to create explicit measures for your analytical needs.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="exam-tip">
+                <p><strong>Exam Tip:</strong> Clearly differentiate between calculated columns (row context, stored, refresh-time) and measures (filter context, dynamic, query-time). Understand that filter context is the set of active filters affecting a measure's calculation. Always prefer explicit measures.</p>
+            </div>
+        </section>
+
+        <section id="dax-functions" class="content-section mb-16">
+            <h2 class="section-title">Essential DAX Functions</h2>
+            <p class="section-intro-text">Mastering these fundamental DAX functions will allow you to perform a wide range of common business calculations.</p>
+            <div class="sub-topic-grid grid-cols-1 md:grid-cols-2">
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title">Aggregators (SUM, AVERAGE, COUNT, MIN, MAX)</h4>
+                    <div class="details-content text-sm">
+                        <p>These functions aggregate values in a single column.</p>
+                        <ul>
+                            <li><code class="code-snippet">SUM(&lt;column&gt;)</code>: Adds all numbers in a column.</li>
+                            <li><code class="code-snippet">AVERAGE(&lt;column&gt;)</code>: Calculates the arithmetic mean of numbers in a column.</li>
+                            <li><code class="code-snippet">COUNT(&lt;column&gt;)</code>: Counts numbers in a column. <code class="code-snippet">COUNTA(&lt;column&gt;)</code> counts non-blank values (any data type). <code class="code-snippet">COUNTROWS(&lt;table&gt;)</code> counts rows in a table. <code class="code-snippet">DISTINCTCOUNT(&lt;column&gt;)</code> counts unique values.</li>
+                            <li><code class="code-snippet">MIN(&lt;column&gt;)</code>: Finds the minimum value (numeric, date, or text).</li>
+                            <li><code class="code-snippet">MAX(&lt;column&gt;)</code>: Finds the maximum value.</li>
+                        </ul>
+                        <div class="code-example">
+                            <code class="code-snippet">Total Quantity = SUM(Sales[OrderQuantity])</code><br>
+                            <code class="code-snippet">Average Unit Price = AVERAGE(Product[ListPrice])</code>
+                        </div>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title">Iterators (SUMX, AVERAGEX, COUNTX, etc.)</h4>
+                    <div class="details-content text-sm">
+                        <p>Iterator functions (ending with 'X') perform calculations row by row over a table, then apply a final aggregation.</p>
+                        <p>They take a table as the first argument and an expression as the second argument, which is evaluated for each row of the table (in a row context).</p>
+                        <ul>
+                            <li><code class="code-snippet">SUMX(&lt;table&gt;, &lt;expression&gt;)</code>: Evaluates expression for each row, then sums the results.</li>
+                            <li><code class="code-snippet">AVERAGEX(&lt;table&gt;, &lt;expression&gt;)</code>: Evaluates expression for each row, then averages the results.</li>
+                            <li><code class="code-snippet">COUNTX(&lt;table&gt;, &lt;expression&gt;)</code>: Evaluates expression for each row, then counts non-blank results.</li>
+                            <li>Others include <code class="code-snippet">MINX</code>, <code class="code-snippet">MAXX</code>, <code class="code-snippet">RANKX</code>, <code class="code-snippet">CONCATENATEX</code>.</li>
+                        </ul>
+                        <p><strong>Use Case:</strong> When you need to perform a calculation involving multiple columns on each row before aggregating. For example, calculating total revenue by multiplying quantity and price for each row, then summing.</p>
+                        <div class="code-example">
+                            <code class="code-snippet">Total Revenue = SUMX(Sales, Sales[OrderQuantity] * Sales[UnitPrice])</code>
+                        </div>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title">CALCULATE: The Cornerstone of DAX</h4>
+                    <div class="details-content text-sm">
+                        <p><code class="code-snippet">CALCULATE(&lt;expression&gt; [, &lt;filter1&gt; [, &lt;filter2&gt; [, ...]]])</code> is arguably the most important function in DAX.</p>
+                        <ul>
+                            <li>It evaluates an expression (often a measure) in a modified filter context.</li>
+                            <li>The filter arguments can add new filters, override existing filters, or remove filters.</li>
+                            <li><strong>Key Capabilities:</strong>
+                                <ul>
+                                    <li>Applying complex filtering logic.</li>
+                                    <li>Modifying context for time intelligence, comparisons, etc.</li>
+                                    <li>Context transition: If used in a row context (e.g., calculated column), it transitions the row context to an equivalent filter context.</li>
+                                </ul>
+                            </li>
+                        </ul>
+                        <div class="code-example">
+                            <code class="code-snippet">Sales for Red Products = CALCULATE([Total Sales], Product[Color] = "Red")</code><br>
+                            <code class="code-snippet">Sales All Products = CALCULATE([Total Sales], ALL(Product))</code>
+                        </div>
+                        <p>Understanding <code class="code-snippet">CALCULATE</code> is fundamental to mastering DAX.</p>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title">Filter Functions (FILTER, ALL, ALLEXCEPT, KEEPFILTERS)</h4>
+                    <div class="details-content text-sm">
+                        <p>These functions are often used as filter arguments within <code class="code-snippet">CALCULATE</code> to manipulate the filter context.</p>
+                        <ul>
+                            <li><code class="code-snippet">FILTER(&lt;table&gt;, &lt;filterExpression&gt;)</code>: Returns a table that has been filtered. The <code class="code-snippet">&lt;filterExpression&gt;</code> is evaluated in a row context for each row of <code class="code-snippet">&lt;table&gt;</code>.</li>
+                            <li><code class="code-snippet">ALL([&lt;tableNameOrColumnName1&gt;[, &lt;tableNameOrColumnName2&gt;[, ...]]])</code>: Removes filters from specified columns or entire tables. If no argument, removes all filters from the entire model. Used to calculate percentages of total, grand totals, etc.</li>
+                            <li><code class="code-snippet">ALLEXCEPT(&lt;table&gt;, &lt;column1&gt; [, &lt;column2&gt; ...])</code>: Removes all filters from a table except for filters applied to the specified columns.</li>
+                            <li><code class="code-snippet">KEEPFILTERS(&lt;expression&gt;)</code>: Modifies how filters are applied within <code class="code-snippet">CALCULATE</code>. Instead of overriding existing filters on the same column, it takes the intersection of existing filters and the new filter.</li>
+                        </ul>
+                        <div class="code-example">
+                            <code class="code-snippet">% of Total Sales = DIVIDE([Total Sales], CALCULATE([Total Sales], ALL(Sales)))</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="exam-tip">
+                <p><strong>Exam Tip:</strong> Differentiate aggregators (operate on a column) from iterators (operate row-by-row on a table then aggregate). <code class="code-snippet">CALCULATE</code> is central; understand its syntax and purpose of modifying filter context. Know what <code class="code-snippet">ALL</code>, <code class="code-snippet">FILTER</code>, and <code class="code-snippet">ALLEXCEPT</code> do to filters.</p>
+            </div>
+        </section>
+
+        <section id="time-intelligence" class="content-section mb-16">
+            <h2 class="section-title">Time Intelligence Functions</h2>
+            <p class="section-intro-text">DAX provides powerful time intelligence functions for period-over-period comparisons, running totals, and other date-based calculations. A proper date table is essential.</p>
+            <div class="sub-topic-grid grid-cols-1 md:grid-cols-2">
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title">Common Time Intelligence Functions</h4>
+                    <div class="details-content text-sm">
+                        <p>These functions typically require a date column from a marked date table as their first argument.</p>
+                        <ul>
+                            <li><code class="code-snippet">TOTALYTD(&lt;expression&gt;, &lt;dates&gt; [, &lt;filter&gt; [, &lt;year_end_date&gt;]])</code>: Calculates the year-to-date value of the expression.</li>
+                            <li><code class="code-snippet">TOTALQTD</code>, <code class="code-snippet">TOTALMTD</code>: Similar for quarter-to-date and month-to-date.</li>
+                            <li><code class="code-snippet">SAMEPERIODLASTYEAR(&lt;dates&gt;)</code>: Returns a table of dates shifted back one year. Often used within <code class="code-snippet">CALCULATE</code> to compare with the previous year.</li>
+                            <li><code class="code-snippet">DATEADD(&lt;dates&gt;, &lt;number_of_intervals&gt;, &lt;interval&gt;)</code>: Returns a table of dates shifted by a specified interval (DAY, MONTH, QUARTER, YEAR). Versatile for various period comparisons.</li>
+                            <li><code class="code-snippet">PREVIOUSYEAR</code>, <code class="code-snippet">PREVIOUSQUARTER</code>, <code class="code-snippet">PREVIOUSMONTH</code>, <code class="code-snippet">PREVIOUSDAY</code>: Simpler alternatives to <code class="code-snippet">DATEADD</code> for single period shifts.</li>
+                            <li><code class="code-snippet">DATESYTD</code>, <code class="code-snippet">DATESQTD</code>, <code class="code-snippet">DATESMTD</code>: Return a table containing a column of dates for the year/quarter/month to date in the current context.</li>
+                        </ul>
+                        <div class="code-example">
+                            <code class="code-snippet">Sales YTD = TOTALYTD(SUM(Sales[SalesAmount]), 'Date'[Date])</code><br>
+                            <code class="code-snippet">Sales PY = CALCULATE(SUM(Sales[SalesAmount]), SAMEPERIODLASTYEAR('Date'[Date]))</code>
+                        </div>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title">Prerequisites for Time Intelligence</h4>
+                    <div class="details-content text-sm">
+                        <p>For time intelligence functions to work correctly and reliably, you MUST have a well-structured <strong>Date Table</strong> in your model with the following characteristics:</p>
+                        <ul>
+                            <li><strong>Continuous Dates:</strong> It must contain an unbroken sequence of dates covering the full range of dates present in your fact tables (from the earliest date to the latest date, including all days in between, even if no transactions occurred on some days).</li>
+                            <li><strong>Date Column:</strong> A column of data type Date, with unique values for each day. This is the column used in relationships and as the primary argument for time intelligence functions.</li>
+                            <li><strong>Marked as Date Table:</strong> In Power BI Desktop, right-click the date table in the Fields pane and select "Mark as date table," then choose the correct date column. This informs the DAX engine about your primary date table.</li>
+                            <li><strong>Relationship:</strong> The date table should have a one-to-many relationship from its date key column to the date key column(s) in your fact table(s).</li>
+                            <li><strong>No Missing Dates:</strong> Gaps in the date sequence within the marked date column can lead to incorrect results.</li>
+                        </ul>
+                        <p>It's best practice to create a custom date table (either in Power Query or using DAX like <code class="code-snippet">CALENDAR</code> or <code class="code-snippet">CALENDARAUTO</code>) rather than relying on Power BI's auto date/time feature for robust time intelligence.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="exam-tip">
+                <p><strong>Exam Tip:</strong> Understand the purpose of key time intelligence functions like <code class="code-snippet">TOTALYTD</code>, <code class="code-snippet">SAMEPERIODLASTYEAR</code>, and <code class="code-snippet">DATEADD</code>. Crucially, know all the prerequisites for a valid date table that enables these functions to work correctly.</p>
+            </div>
+        </section>
+
+        <footer class="text-center mt-12 py-8 border-t border-slate-200">
+            <p class="text-slate-600">&copy; <span id="currentYear"></span> Revature - PL-300 Certification Preparation. All rights reserved.</p>
+        </footer>
+
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+            // Smooth scrolling for nav links
+            document.querySelectorAll('nav a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({ behavior: 'smooth' });
+                    }
+                });
+            });
+
+            // Setup for expandable cards
+            function setupExpandableCards() {
+                const sections = document.querySelectorAll('.content-section');
+                sections.forEach(section => {
+                    const cards = section.querySelectorAll('.sub-topic-card');
+                    cards.forEach(card => {
+                        const titleElement = card.querySelector('.sub-topic-card-title');
+                        const details = card.querySelector('.details-content');
+
+                        if (titleElement && details) {
+                            details.style.display = 'none'; 
+                            titleElement.addEventListener('click', () => {
+                                const isHidden = details.style.display === 'none';
+                                cards.forEach(otherCard => {
+                                    if (otherCard !== card) {
+                                        const otherDetails = otherCard.querySelector('.details-content');
+                                        if (otherDetails) otherDetails.style.display = 'none';
+                                        otherCard.classList.remove('active-item');
+                                    }
+                                });
+                                details.style.display = isHidden ? 'block' : 'none';
+                                if (isHidden) {
+                                    card.classList.add('active-item');
+                                } else {
+                                    card.classList.remove('active-item');
+                                }
+                            });
+                        }
+                    });
+                });
+            }
+            setupExpandableCards();
+        });
+    </script>
+</body>
+</html>

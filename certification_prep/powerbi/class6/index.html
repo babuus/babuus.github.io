@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PL-300 Cert Prep: Class 6 - AI Visuals, Performance & Governance</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Visualization & Content Choices: 
+        - AI Visuals: Goal: Explain Power BI AI features. Method: Grid of clickable cards for Key Influencers, Decomp Tree, Q&A, Smart Narratives. Lib: HTML/CSS/JS. Content expanded.
+        - Report Performance: Goal: Detail optimization techniques. Method: Grid of clickable cards for Perf Analyzer, Design Best Practices, DQ vs Import. Lib: HTML/CSS/JS. Content expanded.
+        - Governance/Compliance: Goal: Overview key concepts. Method: Grid of clickable cards for Sensitivity Labels, Lineage, REST APIs. Lib: HTML/CSS/JS. Content expanded.
+        - Exam Prep: Goal: Provide final tips. Method: Grid of clickable cards for question types, time management, review areas. Lib: HTML/CSS/JS. Content expanded.
+        - Footer: Static content.
+        - No charts needed; focus on interactive text. All AI features removed. Layout consistent with enhanced previous classes.
+    -->
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #f1f5f9; /* slate-100 */
+        }
+        .container {
+            max-width: 1200px;
+        }
+        .section-title { 
+            font-size: 2rem; 
+            font-weight: 700; 
+            margin-bottom: 1rem; 
+            color: #0284c7; /* sky-600 */
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #0ea5e9; /* sky-500 */
+            display: inline-block;
+        }
+        .section-intro-text { 
+            margin-bottom: 2rem; 
+            color: #475569; /* slate-600 */
+            font-size: 1.125rem; /* text-lg */
+            line-height: 1.75;
+        }
+        
+        .sub-topic-grid { 
+            display: grid; 
+            gap: 1.5rem; /* gap-6 */
+        }
+        
+        .sub-topic-card { 
+            background-color: white; 
+            border-radius: 0.75rem; /* rounded-xl */
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.05);
+            padding: 1.5rem; /* p-6 */
+            border: 1px solid #e2e8f0; /* slate-200 */
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .sub-topic-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.07), 0 4px 6px -4px rgba(0,0,0,0.07);
+        }
+        .sub-topic-card-title { 
+            font-size: 1.25rem; /* text-xl */
+            font-weight: 600; 
+            color: #075985; /* sky-800 */
+            margin-bottom: 0.5rem; /* mb-2 */
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .sub-topic-card-title::after {
+            content: '▼'; 
+            font-size: 0.8em;
+            color: #94a3b8; /* slate-400 */
+            transition: transform 0.3s ease;
+        }
+        .sub-topic-card.active-item .sub-topic-card-title::after {
+            transform: rotate(180deg); 
+        }
+         .sub-topic-card.active-item {
+            border-left: 5px solid #0ea5e9; /* sky-500 */
+            background-color: #f7fafc; 
+        }
+        .details-content { 
+            display: none; 
+            margin-top: 1rem; /* mt-4 */
+            padding: 1.25rem; /* p-5 */
+            background-color: #f8fafc; /* slate-50 */
+            border-radius: 0.5rem; /* rounded-lg */
+            border: 1px solid #e2e8f0; /* slate-200 */
+            color: #334155; /* slate-700 */
+            line-height: 1.6;
+        }
+        .details-content p, .details-content ul {
+            margin-bottom: 0.75rem; /* mb-3 */
+        }
+        .details-content ul {
+            list-style-position: inside;
+            padding-left: 0.5rem; /* pl-2 */
+        }
+        .details-content strong {
+            color: #0369a1; /* sky-700 */
+        }
+        .details-content .code-example {
+            background-color: #e0f2fe; /* sky-100 */
+            padding: 0.75rem;
+            border-radius: 0.375rem; /* rounded-md */
+            margin-top: 0.5rem;
+            border-left: 3px solid #0ea5e9; /* sky-500 */
+            font-family: 'Courier New', Courier, monospace;
+            white-space: pre-wrap; 
+        }
+
+        .exam-tip { 
+            background-color: #e0f2fe; 
+            border-left: 5px solid #0ea5e9; 
+            padding: 1.25rem; 
+            margin-top: 1.5rem; 
+            border-radius: 0.5rem; 
+            color: #0c4a6e; 
+        }
+        .exam-tip p:last-child { margin-bottom: 0; }
+        .exam-tip strong { color: #0369a1; }
+
+
+        .nav-link { transition: color 0.3s, border-bottom-color 0.3s; padding-bottom: 0.25rem; }
+        .nav-link:hover { color: #0ea5e9; border-bottom: 2px solid #0ea5e9; }
+        .content-section { padding-top: 5rem; margin-top: -4.5rem; } 
+        .code-snippet { 
+            background-color: #e2e8f0; 
+            color: #1e293b; 
+            padding: 0.25rem 0.5rem; 
+            border-radius: 0.25rem; 
+            font-family: 'Courier New', Courier, monospace; 
+            font-size: 0.9em; 
+            border: 1px solid #cbd5e1; 
+        }
+        .header-main {
+             background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%); 
+             padding: 2rem 0;
+             margin-bottom: 3rem; 
+             border-bottom-left-radius: 1rem;
+             border-bottom-right-radius: 1rem;
+        }
+        .header-main h1 {
+            color: white;
+            font-size: 2.5rem; 
+        }
+         .header-main p {
+            color: #e0f2fe; 
+            font-size: 1.125rem; 
+        }
+        .intro-card {
+            border-left: 5px solid #0ea5e9;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800">
+
+    <nav class="bg-white shadow-lg fixed w-full z-20 top-0">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" class="text-2xl font-bold text-sky-700">PL-300 Prep: Class 6</a>
+            <div class="space-x-1 sm:space-x-2 md:space-x-3 text-xs sm:text-sm md:text-base">
+                <a href="#ai-visuals" class="nav-link text-slate-700">AI Visuals</a>
+                <a href="#report-performance" class="nav-link text-slate-700">Performance</a>
+                <a href="#governance-compliance" class="nav-link text-slate-700">Governance</a>
+                <a href="#exam-prep-final" class="nav-link text-slate-700">Exam Prep</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="header-main">
+        <div class="container mx-auto px-6 text-center">
+            <h1 class="font-bold">AI Visuals, Performance Optimization & Governance 🚀</h1>
+            <p class="mt-2">Interactive Guide for PL-300 Certification - Session 6</p>
+        </div>
+    </div>
+
+    <div class="container mx-auto px-6 py-8">
+
+        <section id="introduction-pl300-class6" class="mb-12 card intro-card">
+             <h2 class="section-title" style="font-size: 1.75rem; margin-bottom: 1rem; border-bottom: none; display: block;">Welcome to Session 6 - The Final Class!</h2>
+             <p class="mb-4 text-slate-700 leading-relaxed">In our concluding session, we'll explore Power BI's built-in AI capabilities to uncover deeper insights, learn crucial techniques for optimizing report performance, and get an overview of data governance and compliance features. Finally, we'll wrap up with essential exam preparation tips.</p>
+             <p class="font-semibold text-slate-700">Today's Focus (30 mins):</p>
+             <ul class="list-disc list-inside ml-4 space-y-1 text-slate-600">
+                <li>Leveraging AI Visuals in Power BI.</li>
+                <li>Optimizing Report Performance.</li>
+                <li>Data Governance and Compliance Overview.</li>
+                <li>Exam Preparation Tips & Q&A.</li>
+             </ul>
+             <p class="mt-4 font-semibold text-sky-600">Let's equip you with the final pieces for PL-300 success!</p>
+        </section>
+
+        <section id="ai-visuals" class="content-section mb-16">
+            <h2 class="section-title">Leveraging AI Visuals in Power BI</h2>
+            <p class="section-intro-text">Power BI incorporates several AI-powered visuals that can help you automatically find insights, understand drivers, and explore data in intuitive ways without complex manual analysis.</p>
+            <div class="sub-topic-grid grid-cols-1 md:grid-cols-2">
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title">Key Influencers Visual</h4>
+                    <div class="details-content text-sm">
+                        <p><strong>Purpose:</strong> Helps you understand what factors (influencers) drive a particular metric or outcome. It analyzes your data and ranks the factors that matter.</p>
+                        <p><strong>How it Works:</strong> You select a metric to analyze (e.g., "Sales Amount") and fields that might influence it (e.g., "Product Category," "Region," "Discount Applied"). The visual shows which values of these influencers are most likely to impact the metric, either positively or negatively.</p>
+                        <p><strong>Use Cases:</strong> Identifying key drivers for sales increase/decrease, understanding factors affecting customer churn, analyzing survey responses.</p>
+                        <p><strong>Limitations:</strong> Works best with categorical influencers. May require sufficient data points for meaningful analysis.</p>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title">Decomposition Tree Visual</h4>
+                    <div class="details-content text-sm">
+                        <p><strong>Purpose:</strong> Allows for ad-hoc exploration and root cause analysis by breaking down a measure across multiple dimensions in a hierarchical way.</p>
+                        <p><strong>How it Works:</strong> You start with a measure to analyze. Then, you can iteratively choose dimensions to "drill down" or "decompose" the measure by. Power BI can also suggest dimensions to split by based on which ones have the highest or lowest values (using its AI capabilities).</p>
+                        <p><strong>Use Cases:</strong> Exploring sales performance across regions, product categories, and time periods; understanding cost breakdowns; investigating anomalies.</p>
+                        <p><strong>Interactive:</strong> Users can click on different branches to explore different paths of decomposition.</p>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title">Q&A Visual (Natural Language Queries)</h4>
+                    <div class="details-content text-sm">
+                        <p><strong>Purpose:</strong> Enables users to ask questions about their data using natural language and get answers in the form of visuals.</p>
+                        <p><strong>How it Works:</strong> Users type questions like "What were the total sales last year?" or "Show top 5 products by revenue." Power BI interprets the question and generates an appropriate visual. Dataset owners can enhance Q&A by adding synonyms, configuring featured questions, and teaching Q&A to understand specific terminology.</p>
+                        <p><strong>Use Cases:</strong> Quick data exploration for users who may not be familiar with creating visuals, embedding in reports for self-service Q&A.</p>
+                        <p><strong>Enabling/Optimizing:</strong> Can be enabled in report settings. Reviewing user questions and improving the underlying data model (clear naming, relationships) helps Q&A perform better.</p>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title">Smart Narratives Visual</h4>
+                    <div class="details-content text-sm">
+                        <p><strong>Purpose:</strong> Automatically generates textual summaries and insights based on the data in your visuals or entire report page.</p>
+                        <p><strong>How it Works:</strong> Adds a text box with dynamically generated narrative that describes key trends, outliers, and insights. The narrative updates as you filter or interact with other visuals.</p>
+                        <p><strong>Customization:</strong> You can customize the generated text, add your own dynamic values (based on measures), and format the narrative.</p>
+                        <p><strong>Use Cases:</strong> Providing quick textual summaries alongside visuals, highlighting key takeaways, improving report accessibility by offering text descriptions.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="exam-tip">
+                <p><strong>Exam Tip:</strong> Understand the primary use case for each AI visual: Key Influencers (drivers), Decomposition Tree (root cause/exploration), Q&A (natural language), Smart Narratives (text summaries). Know that these visuals often rely on well-structured data models.</p>
+            </div>
+        </section>
+
+        <section id="report-performance" class="content-section mb-16">
+            <h2 class="section-title">Optimizing Report Performance</h2>
+            <p class="section-intro-text">Ensuring your Power BI reports load quickly and respond smoothly to user interactions is crucial for a good user experience. This involves both data model optimization (covered earlier) and report design choices.</p>
+            <div class="sub-topic-grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title">Using Performance Analyzer</h4>
+                    <div class="details-content text-sm">
+                        <p>The Performance Analyzer pane in Power BI Desktop is your primary tool for identifying performance bottlenecks within your report.</p>
+                        <p><strong>How to Use:</strong></p>
+                        <ol>
+                            <li>Go to the "View" tab in Power BI Desktop and check "Performance analyzer".</li>
+                            <li>Click "Start recording".</li>
+                            <li>Interact with your report (e.g., refresh visuals, change slicers, open a new page).</li>
+                            <li>The pane will log the time taken for each visual to update, broken down into:
+                                <ul>
+                                    <li><strong>DAX Query:</strong> Time taken by the DAX query sent to the Analysis Services engine.</li>
+                                    <li><strong>Visual Display:</strong> Time taken to render the visual on screen.</li>
+                                    <li><strong>Other:</strong> Time taken for other operations, like waiting for other visuals or background tasks.</li>
+                                </ul>
+                            </li>
+                            <li>You can copy the DAX query for a visual and analyze it further in tools like DAX Studio.</li>
+                        </ol>
+                        <p><strong>Use Cases:</strong> Identifying slow visuals, pinpointing inefficient DAX measures, understanding the impact of visual complexity.</p>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title">Report Design Best Practices for Speed</h4>
+                    <div class="details-content text-sm">
+                        <p>Several design choices can impact report performance:</p>
+                        <ul>
+                            <li><strong>Limit Visuals per Page:</strong> Each visual sends queries. Too many visuals on a single page can significantly slow down load times. Aim for focused pages.</li>
+                            <li><strong>Use Efficient Visuals:</strong> Some custom visuals can be less performant than standard ones. Test custom visuals. Tables and matrices with many fields can also be slow if not optimized.</li>
+                            <li><strong>Optimize DAX Measures:</strong> Write efficient DAX (e.g., minimize use of entire table scans in iterators, use variables, avoid complex context transitions where possible).</li>
+                            <li><strong>Reduce Cardinality:</strong> High cardinality columns (many unique values) in slicers, filters, or visual axes can slow things down. Consider if summarization or grouping is possible.</li>
+                            <li><strong>Image Optimization:</strong> Use optimized image sizes if embedding images in reports.</li>
+                            <li><strong>Avoid Unnecessary Interactions:</strong> If cross-filtering between many visuals isn't needed, consider turning some interactions off.</li>
+                            <li><strong>Query Reduction Options:</strong> For slicers and filters, Power BI has options to reduce the number of queries sent (e.g., adding an "Apply" button to slicers).</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title">DirectQuery vs. Import Mode Performance</h4>
+                    <div class="details-content text-sm">
+                        <p>The data connectivity mode has significant performance implications:</p>
+                        <p><strong>Import Mode:</strong></p>
+                        <ul>
+                            <li>Data is loaded into Power BI's in-memory VertiPaq engine.</li>
+                            <li><strong>Performance:</strong> Generally offers the fastest query performance as data is local and highly compressed/optimized. All DAX calculations are performed by VertiPaq.</li>
+                            <li><strong>Limitations:</strong> Dataset size is limited by memory and Power BI service capacity limits. Data is only as fresh as the last refresh.</li>
+                        </ul>
+                        <p class="mt-2"><strong>DirectQuery Mode:</strong></p>
+                        <ul>
+                            <li>Data remains in the source system. Power BI sends queries to the source database in real-time (or near real-time).</li>
+                            <li><strong>Performance:</strong> Highly dependent on the performance of the underlying data source and the efficiency of the queries generated by Power BI (query folding is critical here). Can be slower than Import mode, especially for complex reports or slow sources.</li>
+                            <li><strong>Benefits:</strong> Suitable for very large datasets that cannot be imported, or when real-time data is essential.</li>
+                            <li><strong>DAX Limitations:</strong> Some DAX functions are not fully supported or may perform differently in DirectQuery.</li>
+                        </ul>
+                        <p><strong>Composite Models:</strong> Allow mixing Import and DirectQuery tables in the same model, offering a hybrid approach.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="exam-tip">
+                <p><strong>Exam Tip:</strong> Know how to use Performance Analyzer to identify slow visuals and queries. Understand key report design best practices for speed. Be clear on the performance characteristics and trade-offs of Import vs. DirectQuery modes.</p>
+            </div>
+        </section>
+
+        <section id="governance-compliance" class="content-section mb-16">
+            <h2 class="section-title">Data Governance and Compliance Overview</h2>
+            <p class="section-intro-text">As data becomes more critical, governance and compliance features within Power BI help manage, secure, and understand data assets effectively.</p>
+            <div class="sub-topic-grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title">Sensitivity Labels</h4>
+                    <div class="details-content text-sm">
+                        <p><strong>Purpose:</strong> To classify and protect sensitive data in Power BI according to your organization's information protection policies.</p>
+                        <p><strong>Integration:</strong> Leverages Microsoft Information Protection (MIP) sensitivity labels, which can be consistent across Office apps, SharePoint, etc.</p>
+                        <p><strong>Application:</strong> Labels can be applied to datasets, reports, dashboards, and dataflows in the Power BI service.</p>
+                        <p><strong>Effects:</strong></p>
+                        <ul>
+                            <li>Visual indication of data sensitivity.</li>
+                            <li>Can trigger protection settings (e.g., encryption if configured in MIP).</li>
+                            <li>Can enforce policies like preventing export to certain file types or warning users when accessing sensitive data.</li>
+                            <li>Label inheritance: Reports and dashboards can inherit labels from their underlying datasets.</li>
+                        </ul>
+                        <p>Requires appropriate licensing (often part of Microsoft 365 compliance SKUs) and configuration by an administrator.</p>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title">Data Lineage and Impact Analysis</h4>
+                    <div class="details-content text-sm">
+                        <p><strong>Data Lineage View (Power BI Service):</strong></p>
+                        <ul>
+                            <li>Provides a visual representation of the flow of data from its sources, through dataflows and datasets, to reports and dashboards within a workspace.</li>
+                            <li>Helps understand dependencies between artifacts.</li>
+                            <li>Useful for troubleshooting data refresh issues or understanding where data originates.</li>
+                        </ul>
+                        <p class="mt-2"><strong>Impact Analysis:</strong></p>
+                        <ul>
+                            <li>When viewing a dataset or dataflow in the lineage view, you can see which downstream items (reports, dashboards) depend on it.</li>
+                            <li>This helps assess the potential impact of making changes to a dataset or dataflow (e.g., modifying a column, changing refresh schedule).</li>
+                            <li>Notifications can be sent to contacts of impacted items.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title">Overview of Power BI REST APIs</h4>
+                    <div class="details-content text-sm">
+                        <p><strong>Purpose:</strong> Allow programmatic interaction with Power BI service resources for automation, administration, and embedding.</p>
+                        <p><strong>Conceptual Use Cases (Not deep technical details for PL-300):</strong></p>
+                        <ul>
+                            <li><strong>Automation:</strong> Automate tasks like refreshing datasets, managing workspaces, cloning reports, deploying content.</li>
+                            <li><strong>Administration:</strong> Get lists of users, datasets, capacities; monitor activity logs.</li>
+                            <li><strong>Embedding:</strong> Embed Power BI reports, dashboards, and Q&A into custom applications (Power BI Embedded analytics).</li>
+                            <li><strong>Custom Solutions:</strong> Build custom applications that integrate with Power BI data and functionalities.</li>
+                        </ul>
+                        <p>Authentication typically involves Azure Active Directory (Azure AD) app registrations and service principals or user credentials (OAuth2).</p>
+                        <p>For PL-300, a high-level awareness of their existence and general purpose is usually sufficient.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="exam-tip">
+                <p><strong>Exam Tip:</strong> Understand the purpose of sensitivity labels for data classification and protection. Know that data lineage view helps visualize data flow and dependencies. Be aware that Power BI REST APIs exist for automation and embedding, but deep API knowledge is not expected.</p>
+            </div>
+        </section>
+
+        <section id="exam-prep-final" class="content-section mb-16">
+            <h2 class="section-title">Exam Preparation Tips & Q&A</h2>
+            <p class="section-intro-text">Final strategies and reminders as you prepare to take the PL-300 Microsoft Power BI Data Analyst exam.</p>
+            <div class="sub-topic-grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title">Types of Questions to Expect</h4>
+                    <div class="details-content text-sm">
+                        <p>The PL-300 exam typically includes a variety of question formats:</p>
+                        <ul>
+                            <li><strong>Multiple Choice (Single Answer):</strong> Select the one best answer.</li>
+                            <li><strong>Multiple Choice (Multiple Answers):</strong> Select all correct answers (number to select is usually specified).</li>
+                            <li><strong>Scenario-Based Questions:</strong> A description of a business problem or data situation is given, and you need to choose the best solution or next step.</li>
+                            <li><strong>Case Studies:</strong> A longer scenario with multiple associated questions. You'll need to refer back to the case study details for each question.</li>
+                            <li><strong>Drag and Drop:</strong> Match items or place steps in the correct order.</li>
+                            <li><strong>Build List / Hot Area:</strong> Select items from a list or click on areas of an image.</li>
+                            <li><strong>Active Screen / UI Interaction:</strong> You might be presented with a simulated UI and asked to perform a task or identify a feature.</li>
+                        </ul>
+                        <p>Read each question carefully, paying attention to keywords like "MOST," "BEST," "NOT."</p>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title">Time Management During the Exam</h4>
+                    <div class="details-content text-sm">
+                        <ul>
+                            <li><strong>Know the Duration and Number of Questions:</strong> Check the official Microsoft exam page for the latest details. Typically, you have around 100-120 minutes for 40-60 questions (this can vary).</li>
+                            <li><strong>Pace Yourself:</strong> Roughly calculate how much time you have per question (e.g., 2 minutes).</li>
+                            <li><strong>Don't Get Stuck:</strong> If a question is too difficult or time-consuming, mark it for review and move on. You can return to it later if time permits.</li>
+                            <li><strong>Answer Every Question:</strong> There is typically no penalty for incorrect answers, so it's better to make an educated guess than to leave a question blank.</li>
+                            <li><strong>Review Marked Questions:</strong> If you have time at the end, go back and review any questions you marked or were unsure about.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title">Reviewing Key Areas from Skills Outline</h4>
+                    <div class="details-content text-sm">
+                        <p>The official Microsoft "Skills Measured" document for PL-300 is your most important guide for exam content.</p>
+                        <ul>
+                            <li><strong>Download the Latest Version:</strong> Ensure you have the current skills outline from the Microsoft Learn PL-300 exam page.</li>
+                            <li><strong>Weightings:</strong> Pay attention to the percentage weighting for each skill area (Prepare the data, Model the data, Visualize and analyze the data, Deploy and maintain assets). Focus more study time on higher-weighted areas.</li>
+                            <li><strong>Go Through Each Sub-Task:</strong> Systematically review each sub-task listed under the main skill areas. Ensure you understand the concepts and can perform the actions described.</li>
+                            <li><strong>Identify Weak Areas:</strong> Use practice tests and self-assessment to pinpoint topics where you need more review.</li>
+                            <li><strong>Hands-on Practice:</strong> The PL-300 is very practical. Spend time working in Power BI Desktop and the Power BI service to solidify your skills.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+             <div class="mt-8 card bg-sky-50 border-sky-200">
+                <h4 class="sub-topic-card-title" style="color: #0369a1;">Open Q&A and Final Doubts</h4>
+                <div class="details-content text-sm" style="display:block; background-color: #f0f9ff;">
+                     <p>This is the perfect time to ask any remaining questions about the PL-300 exam content, specific Power BI features, or exam strategies. No question is too small or too basic!</p>
+                     <p><strong>Key things to remember for exam day:</strong></p>
+                     <ul>
+                         <li>Get a good night's sleep.</li>
+                         <li>If taking online, ensure your system meets requirements and your environment is clear.</li>
+                         <li>Read questions carefully.</li>
+                         <li>Manage your time effectively.</li>
+                         <li>Trust your preparation!</li>
+                     </ul>
+                     <p class="font-semibold mt-3">You've put in the work, now go and ace that exam!</p>
+                </div>
+            </div>
+        </section>
+
+        <footer class="text-center mt-12 py-8 border-t border-slate-200">
+            <p class="text-slate-600">&copy; <span id="currentYear"></span> Revature - PL-300 Certification Preparation. All rights reserved.</p>
+            <p class="text-slate-500 mt-1">Best of luck on your PL-300 Exam!</p>
+        </footer>
+
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+            // Smooth scrolling for nav links
+            document.querySelectorAll('nav a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({ behavior: 'smooth' });
+                    }
+                });
+            });
+
+            // Setup for expandable cards
+            function setupExpandableCards() {
+                const sections = document.querySelectorAll('.content-section');
+                sections.forEach(section => {
+                    const cards = section.querySelectorAll('.sub-topic-card');
+                    cards.forEach(card => {
+                        const titleElement = card.querySelector('.sub-topic-card-title');
+                        const details = card.querySelector('.details-content');
+
+                        if (titleElement && details) {
+                            // Exception for the Q&A card to be open by default
+                            if (card.parentElement.id === 'exam-prep-final' && titleElement.textContent.includes('Open Q&A')) {
+                                // details.style.display = 'block'; // This was for the old Q&A card, now it's part of a normal card
+                                // card.classList.add('active-item');
+                            } else {
+                                details.style.display = 'none'; 
+                            }
+                            
+                            titleElement.addEventListener('click', () => {
+                                const isHidden = details.style.display === 'none';
+                                // Close other open cards within the same grid
+                                const parentGrid = card.closest('.sub-topic-grid');
+                                if (parentGrid) {
+                                    parentGrid.querySelectorAll('.sub-topic-card').forEach(otherCard => {
+                                        if (otherCard !== card) {
+                                            const otherDetails = otherCard.querySelector('.details-content');
+                                            if (otherDetails) otherDetails.style.display = 'none';
+                                            otherCard.classList.remove('active-item');
+                                        }
+                                    });
+                                }
+                                
+                                details.style.display = isHidden ? 'block' : 'none';
+                                if (isHidden) {
+                                    card.classList.add('active-item');
+                                } else {
+                                    card.classList.remove('active-item');
+                                }
+                            });
+                        }
+                    });
+                });
+            }
+            setupExpandableCards();
+        });
+    </script>
+</body>
+</html>

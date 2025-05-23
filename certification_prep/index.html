@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certification Preparation Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #f1f5f9; /* slate-100 */
+        }
+        .container {
+            max-width: 1200px;
+        }
+        .header-main {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); /* Different Blue gradient for main hub */
+            padding: 3rem 0; 
+            margin-bottom: 3rem; 
+            border-bottom-left-radius: 1rem;
+            border-bottom-right-radius: 1rem;
+            text-align: center;
+        }
+        .header-main h1 { 
+            color: white;
+            font-size: 2.75rem; /* Slightly larger for main hub */
+            line-height: 1.2; 
+            font-weight: 700;
+        }
+         .header-main p {
+            color: #dbeafe; /* blue-100 */
+            font-size: 1.125rem; /* text-lg */
+            margin-top: 0.5rem;
+        }
+        .certification-grid {
+            display: grid;
+            /* Adjusted to ensure 3 cards fit well on medium screens, and 1 on small */
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); 
+            gap: 2rem; /* Increased gap slightly */
+            padding: 0 1rem; 
+        }
+        .certification-card {
+            background-color: white;
+            border-radius: 0.75rem; /* rounded-xl */
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.07), 0 4px 6px -4px rgba(0,0,0,0.07);
+            padding: 2rem; /* p-8 */
+            border: 1px solid #e2e8f0; /* slate-200 */
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; 
+        }
+        .certification-card:hover {
+            transform: translateY(-5px) scale(1.03); /* Slightly more pronounced hover */
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1);
+        }
+        .certification-card-title {
+            font-size: 1.75rem; /* text-2xl equivalent, but a bit larger */
+            font-weight: 600;
+            color: #1e3a8a; /* darker blue */
+            margin-bottom: 0.75rem; /* mb-3 */
+        }
+        .certification-card-subtitle {
+            font-size: 0.9rem;
+            color: #64748b; /* slate-500 */
+            margin-bottom: 1rem;
+        }
+        .certification-card-description {
+            font-size: 0.95rem; 
+            color: #475569; /* slate-600 */
+            margin-bottom: 1.5rem; /* mb-6 */
+            flex-grow: 1; 
+        }
+        .certification-card-link {
+            display: inline-block;
+            background-color: #2563eb; /* blue-600 */
+            color: white;
+            padding: 0.85rem 1.75rem; /* Slightly larger padding */
+            border-radius: 0.5rem; /* rounded-lg */
+            text-align: center;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+            text-decoration: none; 
+        }
+        .certification-card-link:hover {
+            background-color: #1d4ed8; /* blue-700 */
+        }
+        .footer {
+            text-align: center;
+            margin-top: 4rem; /* mt-16 */
+            padding-bottom: 2rem; /* pb-8 */
+            border-top: 1px solid #e2e8f0; /* slate-200 */
+            padding-top: 2rem; /* pt-8 */
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800">
+
+    <div class="header-main">
+        <div class="container mx-auto px-6">
+            <h1>Revature Certification Hub</h1>
+            <p>Your central place for accessing all certification preparation materials.</p>
+        </div>
+    </div>
+
+    <div class="container mx-auto px-6 py-8">
+        <h2 class="text-3xl font-bold text-center text-blue-700 mb-12">Available Certification Tracks</h2>
+        
+        <div class="certification-grid">
+            <div class="certification-card">
+                <div>
+                    <h3 class="certification-card-title">Azure AI Fundamentals</h3>
+                    <p class="certification-card-subtitle">Exam: AI-900</p>
+                    <p class="certification-card-description">Master Azure AI concepts for the AI-900 certification. Covers core AI, Machine Learning, Computer Vision, NLP, and Generative AI on Azure.</p>
+                </div>
+                <a href="genai/index.html" class="certification-card-link">Explore AI-900 Prep</a>
+            </div>
+
+            <div class="certification-card">
+                <div>
+                    <h3 class="certification-card-title">Power BI Data Analyst</h3>
+                    <p class="certification-card-subtitle">Exam: PL-300</p>
+                    <p class="certification-card-description">Prepare for the PL-300 exam. Learn to enable data-driven decisions with Power BI for data modeling, visualization, and insightful analysis.</p>
+                </div>
+                <a href="powerbi/index.html" class="certification-card-link">Explore PL-300 Prep</a>
+            </div>
+
+            <div class="certification-card">
+                <div>
+                    <h3 class="certification-card-title">Snowflake SnowPro Core</h3>
+                    <p class="certification-card-subtitle">Exam: SnowPro Core Certification</p>
+                    <p class="certification-card-description">Get ready for the SnowPro Core Certification. Covers Snowflake architecture, data loading, virtual warehouses, query construction, and best practices.</p>
+                </div>
+                <a href="snowflake/index.html" class="certification-card-link">Explore SnowPro Prep</a>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p class="text-slate-600">&copy; <span id="currentYear"></span> Revature - Certification Preparation. All rights reserved.</p>
+        <p class="text-slate-500 mt-1">Your Success is Our Priority!</p>
+    </footer>
+
+    <script>
+        // Script to set the current year in the footer
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+    </script>
+</body>
+</html>

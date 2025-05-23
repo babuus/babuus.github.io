@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-900 Cert Prep: Class 4 - Computer Vision on Azure</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 
+        Session 4: Features of Computer Vision Workloads on Azure
+        Objective: Understand Azure services for analyzing images and video.
+        - Intro to CV Concepts: Classification, object detection, OCR, facial detection/analysis.
+        - Azure AI Vision Service: Image Analysis, OCR, Spatial Analysis.
+        - Azure AI Face Service: Detection, Verification/Identification, Analysis.
+        - Azure AI Custom Vision: Concept, Use cases.
+        - Azure Form Recognizer / Azure AI Document Intelligence: Extracting document data.
+        - Teaching Tips: Example JSON output descriptions, use cases.
+    -->
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #f1f5f9; /* slate-100 */
+        }
+        .container {
+            max-width: 1200px;
+        }
+        .section-title { 
+            font-size: 2rem; 
+            font-weight: 700; 
+            margin-bottom: 1rem; 
+            color: #0284c7; /* sky-600 */
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #0ea5e9; /* sky-500 */
+            display: inline-block;
+        }
+        .section-intro-text { 
+            margin-bottom: 2rem; 
+            color: #475569; /* slate-600 */
+            font-size: 1.125rem; /* text-lg */
+            line-height: 1.75;
+        }
+        
+        .sub-topic-grid { 
+            display: grid; 
+            gap: 1.5rem; /* gap-6 */
+        }
+        
+        .sub-topic-card { 
+            background-color: white; 
+            border-radius: 0.75rem; /* rounded-xl */
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.05);
+            padding: 1.5rem; /* p-6 */
+            border: 1px solid #e2e8f0; /* slate-200 */
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            display: flex; 
+            flex-direction: column; 
+        }
+        .sub-topic-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.07), 0 4px 6px -4px rgba(0,0,0,0.07);
+        }
+        .sub-topic-card-title { 
+            font-size: 1.25rem; /* text-xl */
+            font-weight: 600; 
+            color: #075985; /* sky-800 */
+            margin-bottom: 0.5rem; /* mb-2 */
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .sub-topic-card-title .emoji-icon { 
+            margin-right: 0.5rem;
+            font-size: 1.3em; 
+        }
+        .sub-topic-card-title::after {
+            content: '▼'; 
+            font-size: 0.8em;
+            color: #94a3b8; /* slate-400 */
+            transition: transform 0.3s ease;
+        }
+        .sub-topic-card.active-item .sub-topic-card-title::after {
+            transform: rotate(180deg); 
+        }
+         .sub-topic-card.active-item {
+            border-left: 5px solid #0ea5e9; /* sky-500 */
+            background-color: #f7fafc; 
+        }
+        .details-content { 
+            display: none; 
+            margin-top: 1rem; /* mt-4 */
+            padding: 1.25rem; /* p-5 */
+            background-color: #f8fafc; /* slate-50 */
+            border-radius: 0.5rem; /* rounded-lg */
+            border: 1px solid #e2e8f0; /* slate-200 */
+            color: #334155; /* slate-700 */
+            line-height: 1.6;
+            flex-grow: 1; 
+        }
+        .details-content p, .details-content ul {
+            margin-bottom: 0.75rem; /* mb-3 */
+        }
+        .details-content ul {
+            list-style-position: inside;
+            padding-left: 0.5rem; /* pl-2 */
+        }
+        .details-content strong {
+            color: #0369a1; /* sky-700 */
+        }
+        .details-content .code-example, .details-content .json-example { 
+            background-color: #e0f2fe; 
+            padding: 0.75rem;
+            border-radius: 0.375rem; 
+            margin-top: 0.5rem;
+            border-left: 3px solid #0ea5e9; 
+            font-family: 'Courier New', Courier, monospace;
+            white-space: pre-wrap; 
+            font-size: 0.875rem; /* text-sm */
+        }
+         .json-example strong {
+            color: #075985; /* sky-800, slightly darker for keys */
+        }
+
+        .exam-tip { 
+            background-color: #e0f2fe; 
+            border-left: 5px solid #0ea5e9; 
+            padding: 1.25rem; 
+            margin-top: 1.5rem; 
+            border-radius: 0.5rem; 
+            color: #0c4a6e; 
+        }
+        .exam-tip p:last-child { margin-bottom: 0; }
+        .exam-tip strong { color: #0369a1; }
+
+        .nav-link { transition: color 0.3s, border-bottom-color 0.3s; padding-bottom: 0.25rem; }
+        .nav-link:hover { color: #0ea5e9; border-bottom: 2px solid #0ea5e9; }
+        .content-section { padding-top: 5rem; margin-top: -4.5rem; } 
+        
+        .header-main {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%); /* Emerald/Green gradient */
+            padding: 2rem 0; 
+            margin-top: 4rem; /* Account for fixed navbar height */
+            margin-bottom: 3rem; 
+            border-bottom-left-radius: 1rem;
+            border-bottom-right-radius: 1rem;
+        }
+        .header-main h1 { 
+            color: white;
+            font-size: 2.25rem; 
+            line-height: 1.2; 
+        }
+         .header-main p {
+            color: #d1fae5; /* emerald-100 */
+            font-size: 1.125rem; 
+        }
+        .intro-card {
+            border-left: 5px solid #10b981; /* emerald-500 */
+            padding-top: 1.5rem;
+            padding-right: 1.5rem;
+            padding-bottom: 1.5rem;
+            padding-left: 2rem; 
+        }
+        .image-placeholder {
+            background-color: #e9ecef;
+            border: 2px dashed #adb5bd;
+            padding: 2rem;
+            text-align: center;
+            color: #495057;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800">
+
+    <nav class="bg-white shadow-lg fixed w-full z-20 top-0">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" class="text-2xl font-bold text-emerald-700">AI-900 Prep: Class 4</a>
+            <div class="space-x-1 sm:space-x-2 md:space-x-3 text-xs sm:text-sm md:text-base">
+                <a href="#cv-concepts" class="nav-link text-slate-700">CV Concepts</a>
+                <a href="#ai-vision" class="nav-link text-slate-700">AI Vision</a>
+                <a href="#ai-face" class="nav-link text-slate-700">AI Face</a>
+                <a href="#custom-vision" class="nav-link text-slate-700">Custom Vision</a>
+                <a href="#doc-intelligence" class="nav-link text-slate-700">Doc Intelligence</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="header-main">
+        <div class="container mx-auto px-6 text-center">
+            <h1 class="font-bold text-3xl md:text-4xl leading-tight">Features of Computer Vision Workloads on Azure 👁️🖼️</h1>
+            <p class="mt-2">Interactive Guide for AI-900 Certification - Session 4</p>
+        </div>
+    </div>
+
+    <div class="container mx-auto px-6 py-8">
+
+        <section id="introduction-ai900-class4" class="mb-12 card intro-card">
+             <h2 class="section-title" style="font-size: 1.75rem; margin-bottom: 1rem; border-bottom: none; display: block; color: #047857;">Welcome to Session 4!</h2>
+             <p class="mb-4 text-slate-700 leading-relaxed">Today, we shift our focus to the exciting world of Computer Vision on Azure. We'll explore fundamental computer vision concepts and dive into the various Azure services that enable applications to "see" and interpret visual information from images and videos.</p>
+             <p class="font-semibold text-slate-700">Objective: Understand Azure services for analyzing images and video.</p>
+             <p class="font-semibold text-slate-700 mt-2">Today's Focus (Approx. 15-20% of exam):</p>
+             <ul class="list-disc list-inside ml-4 space-y-1 text-slate-600">
+                <li>Introduction to Computer Vision Concepts.</li>
+                <li>Azure AI Vision service (Image Analysis, OCR, Spatial Analysis concept).</li>
+                <li>Azure AI Face service (Detection, Verification, Identification, Analysis).</li>
+                <li>Azure AI Custom Vision service (Building custom models).</li>
+                <li>Azure Form Recognizer / Azure AI Document Intelligence (Extracting data from documents).</li>
+             </ul>
+             <p class="mt-4 font-semibold text-emerald-600">Let's explore how Azure brings sight to applications!</p>
+        </section>
+
+        <section id="cv-concepts" class="content-section mb-16">
+            <h2 class="section-title" style="color: #047857; border-color: #059669;">Introduction to Computer Vision Concepts</h2>
+            <p class="section-intro-text">Computer Vision is a field of AI that enables computers to interpret and understand visual information from the world, such as images and videos. Here are some core concepts:</p>
+            <div class="sub-topic-grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title"><span class="emoji-icon">🖼️</span>Image Classification</h4>
+                    <div class="details-content text-sm">
+                        <p><strong>Concept:</strong> Assigning a label or class to an entire image based on its content.</p>
+                        <p><strong>Goal:</strong> To categorize an image (e.g., "cat," "dog," "car," "landscape").</p>
+                        <p><strong>Example:</strong> A system that sorts photos into albums based on whether they contain animals, people, or scenery.</p>
+                        <div class="image-placeholder"><p>Imagine an image of a cat, and the output label: "cat"</p></div>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title"><span class="emoji-icon">🎯</span>Object Detection</h4>
+                    <div class="details-content text-sm">
+                        <p><strong>Concept:</strong> Identifying the location and class of one or more objects within an image, typically by drawing bounding boxes around them.</p>
+                        <p><strong>Goal:</strong> To not only classify objects but also pinpoint their position.</p>
+                        <p><strong>Example:</strong> A self-driving car identifying pedestrians, other vehicles, and traffic signs, along with their locations in its field of view.</p>
+                        <div class="image-placeholder"><p>Imagine an image with a cat and a dog. Output: Bounding box around cat labeled "cat", bounding box around dog labeled "dog".</p></div>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title"><span class="emoji-icon">📄</span>Optical Character Recognition (OCR)</h4>
+                    <div class="details-content text-sm">
+                        <p><strong>Concept:</strong> Extracting printed or handwritten text from images or scanned documents and converting it into machine-readable text.</p>
+                        <p><strong>Goal:</strong> To digitize text from visual media.</p>
+                        <p><strong>Example:</strong> Scanning a paper invoice and extracting the invoice number, date, and line items into a database.</p>
+                        <div class="image-placeholder"><p>Imagine an image of a street sign. Output: The text on the sign, e.g., "Main Street".</p></div>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title"><span class="emoji-icon">😊</span>Facial Detection & Analysis</h4>
+                    <div class="details-content text-sm">
+                        <p><strong>Facial Detection:</strong> Identifying the presence and location of human faces in an image.</p>
+                        <p><strong>Facial Analysis:</strong> After detecting a face, analyzing its attributes, such as estimated age, gender, emotion, pose, or whether the person is wearing glasses.</p>
+                        <p><strong>Goal:</strong> To find faces and understand their characteristics.</p>
+                        <p><strong>Example:</strong> An application that automatically tags people in photos or a system that gauges audience reaction by analyzing facial expressions.</p>
+                        <div class="image-placeholder"><p>Imagine a photo of a smiling person. Output: Bounding box around the face, attributes like "emotion: happiness", "estimated age: 25-30".</p></div>
+                    </div>
+                </div>
+            </div>
+            <div class="exam-tip">
+                <p><strong>Exam Tip:</strong> Be able to define and differentiate between image classification, object detection, OCR, and facial detection/analysis. Understand the primary goal of each concept.</p>
+            </div>
+        </section>
+
+        <section id="ai-vision" class="content-section mb-16">
+            <h2 class="section-title" style="color: #047857; border-color: #059669;">Azure AI Vision Service</h2>
+            <p class="section-intro-text">The Azure AI Vision service (part of Azure Cognitive Services) provides pre-trained models to analyze images and return insights. It was formerly known as the Computer Vision service.</p>
+            <div class="sub-topic-grid grid-cols-1 md:grid-cols-2">
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title"><span class="emoji-icon">🔍</span>Image Analysis</h4>
+                    <div class="details-content text-sm">
+                        <p><strong>Concept:</strong> Provides a wide range of visual features from a single API call.</p>
+                        <p><strong>Capabilities:</strong></p>
+                        <ul>
+                            <li><strong>Describing Images (Captioning):</strong> Generates a human-readable sentence describing the image content.</li>
+                            <li><strong>Tagging Content:</strong> Identifies and tags thousands of recognizable objects, living beings, scenery, and actions.</li>
+                            <li><strong>Detecting Objects:</strong> Returns bounding boxes for multiple objects detected in an image.</li>
+                            <li><strong>Category Detection:</strong> Classifies images into broad categories (e.g., "people_", "animal_cat", "outdoor_mountain").</li>
+                            <li><strong>Brand Detection:</strong> Identifies commercial brands in images.</li>
+                            <li><strong>Detecting Adult Content:</strong> Identifies adult, racy, or gory content.</li>
+                        </ul>
+                        <p><strong>Example JSON Output (Conceptual for Image Description & Tags):</strong></p>
+                        <div class="json-example">
+                            <pre>
+{
+  "description": {
+    "tags": ["outdoor", "sky", "building", "city"],
+    "captions": [
+      { "text": "a skyscraper in a city under a blue sky", "confidence": 0.95 }
+    ]
+  },
+  "tags": [
+    { "name": "building", "confidence": 0.99 },
+    { "name": "skyscraper", "confidence": 0.98 },
+    { "name": "city", "confidence": 0.92 }
+  ]
+}
+                            </pre>
+                        </div>
+                         <p><strong>Use Case:</strong> Automatically generating alt text for images on a website, content moderation, or organizing large image libraries.</p>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title"><span class="emoji-icon">📰</span>Optical Character Recognition (OCR)</h4>
+                    <div class="details-content text-sm">
+                        <p><strong>Concept:</strong> Extracts printed and handwritten text from images and documents.</p>
+                        <p><strong>Capabilities (Read API):</strong></p>
+                        <ul>
+                            <li>Supports a wide range of languages.</li>
+                            <li>Can handle mixed-language text, skewed images, and text on complex backgrounds.</li>
+                            <li>Returns text lines and words with their bounding box coordinates.</li>
+                        </ul>
+                        <p><strong>Example JSON Output (Conceptual for OCR):</strong></p>
+                        <div class="json-example">
+                            <pre>
+{
+  "readResults": [
+    {
+      "page": 1,
+      "lines": [
+        { 
+          "text": "Azure AI Vision", 
+          "boundingBox": [10, 10, 200, 10, 200, 30, 10, 30],
+          "words": [
+            { "text": "Azure", "boundingBox": [...] },
+            { "text": "AI", "boundingBox": [...] },
+            { "text": "Vision", "boundingBox": [...] }
+          ]
+        }
+      ]
+    }
+  ]
+}
+                            </pre>
+                        </div>
+                        <p><strong>Use Case:</strong> Digitizing invoices, extracting information from receipts, making scanned documents searchable.</p>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title"><span class="emoji-icon">🚶</span>Spatial Analysis (Brief Concept)</h4>
+                    <div class="details-content text-sm">
+                        <p><strong>Concept:</strong> (This is a more advanced feature, often requiring specific hardware/cameras and is less emphasized for AI-900 but good to be aware of). It analyzes video streams to understand the presence and movement of people in physical spaces.</p>
+                        <p><strong>Capabilities (Conceptual):</strong></p>
+                        <ul>
+                            <li><strong>Person Counting:</strong> Counting people in a defined zone.</li>
+                            <li><strong>Social Distancing Monitoring:</strong> Measuring distances between people.</li>
+                            <li><strong>Entry/Exit Tracking:</strong> Monitoring when people enter or leave an area.</li>
+                        </ul>
+                        <p><strong>Use Case:</strong> Retail analytics (understanding customer flow), optimizing office space usage, ensuring safety compliance in public areas.</p>
+                        <p><em>Note: For AI-900, a high-level awareness of its purpose is usually sufficient.</em></p>
+                    </div>
+                </div>
+            </div>
+            <div class="exam-tip">
+                <p><strong>Exam Tip:</strong> Know the key capabilities of the Azure AI Vision service, especially image description/tagging and OCR. Understand that it provides pre-trained models for common vision tasks. Be able to identify use cases for these features.</p>
+            </div>
+        </section>
+
+        <section id="ai-face" class="content-section mb-16">
+            <h2 class="section-title" style="color: #047857; border-color: #059669;">Azure AI Face Service</h2>
+            <p class="section-intro-text">The Azure AI Face service provides algorithms for detecting, recognizing, and analyzing human faces in images.</p>
+            <div class="sub-topic-grid grid-cols-1 md:grid-cols-2">
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title"><span class="emoji-icon">😃</span>Face Detection</h4>
+                    <div class="details-content text-sm">
+                        <p><strong>Concept:</strong> Locates human faces within an image and returns bounding box coordinates for each face.</p>
+                        <p><strong>Capabilities:</strong></p>
+                        <ul>
+                            <li>Can detect multiple faces in an image.</li>
+                            <li>Optionally returns face landmarks (e.g., positions of pupils, nose, mouth corners).</li>
+                            <li>Can return a `faceId` for each detected face, which is used in subsequent operations like identification or verification.</li>
+                        </ul>
+                        <p><strong>Example JSON Output (Conceptual):</strong></p>
+                        <div class="json-example">
+                            <pre>
+[
+  {
+    "faceId": "c5c5c5c5-0000-0000-0000-000000000000",
+    "faceRectangle": { "top": 50, "left": 100, "width": 75, "height": 75 }
+  }
+]
+                            </pre>
+                        </div>
+                        <p><strong>Use Case:</strong> Cropping images to focus on faces, counting people in photos, or as a first step before facial analysis or recognition.</p>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title"><span class="emoji-icon">🆔</span>Face Verification & Identification (Conceptual)</h4>
+                    <div class="details-content text-sm">
+                        <p><strong>Face Verification ("Is this person X?"):</strong></p>
+                        <ul>
+                            <li><strong>Concept:</strong> Compares a detected face (`faceId`) against another `faceId` or a `Person` object (from a `PersonGroup` or `LargePersonGroup`) to determine if they belong to the same person.</li>
+                            <li><strong>Output:</strong> A boolean (isIdentical) and a confidence score.</li>
+                            <li><strong>Use Case:</strong> Verifying a user's identity by comparing their live photo with a stored photo (e.g., for app login).</li>
+                        </ul>
+                        <p><strong>Face Identification ("Who is this person?"):</strong></p>
+                        <ul>
+                            <li><strong>Concept:</strong> Compares a detected face (`faceId`) against a group of known people (a `PersonGroup` or `LargePersonGroup`) to find matches.</li>
+                            <li><strong>Output:</strong> The `PersonId`(s) of the matching person(s) from the group, along with confidence scores.</li>
+                            <li><strong>Use Case:</strong> Identifying known individuals in a photo gallery, recognizing VIP customers.</li>
+                        </ul>
+                         <p><em>Note: These require pre-registering known individuals into PersonGroup/LargePersonGroup data structures.</em></p>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title"><span class="emoji-icon">🧐</span>Facial Analysis (Attributes)</h4>
+                    <div class="details-content text-sm">
+                        <p><strong>Concept:</strong> Predicts a range of facial attributes from a detected face.</p>
+                        <p><strong>Common Attributes:</strong></p>
+                        <ul>
+                            <li><strong>Age:</strong> Estimated apparent age.</li>
+                            <li><strong>Gender:</strong> Male, Female.</li>
+                            <li><strong>Emotion:</strong> Happiness, sadness, anger, surprise, fear, contempt, disgust, neutral.</li>
+                            <li><strong>Smile:</strong> Intensity of smile.</li>
+                            <li><strong>Facial Hair:</strong> Moustache, beard, sideburns.</li>
+                            <li><strong>Glasses:</strong> Type of glasses (e.g., ReadingGlasses, Sunglasses) or NoGlasses.</li>
+                            <li><strong>Head Pose:</strong> Pitch, roll, yaw.</li>
+                            <li><strong>Makeup:</strong> Eye makeup, lip makeup.</li>
+                            <li><strong>Occlusion:</strong> If parts of the face are blocked.</li>
+                            <li><strong>Blur, Exposure, Noise:</strong> Image quality attributes.</li>
+                        </ul>
+                        <p><strong>Example JSON Output (Conceptual for Attributes):</strong></p>
+                        <div class="json-example">
+                            <pre>
+{
+  "faceAttributes": {
+    "age": 30.0,
+    "gender": "male",
+    "smile": 0.8,
+    "emotion": { "happiness": 0.9, "neutral": 0.1, ...},
+    "glasses": "NoGlasses"
+  }
+}
+                            </pre>
+                        </div>
+                        <p><strong>Use Case:</strong> Understanding customer demographics, gauging emotional responses to content, creating personalized experiences.</p>
+                        <p><strong>Important Note on Responsible AI:</strong> Facial recognition and analysis technologies must be used responsibly, considering ethical implications, privacy, and potential biases. Microsoft has guidelines for responsible use.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="exam-tip">
+                <p><strong>Exam Tip:</strong> Understand the difference between face detection, verification, and identification. Know common facial attributes that can be analyzed. Be aware of the responsible AI considerations for face services.</p>
+            </div>
+        </section>
+
+        <section id="custom-vision" class="content-section mb-16">
+            <h2 class="section-title" style="color: #047857; border-color: #059669;">Azure AI Custom Vision Service</h2>
+            <p class="section-intro-text">The Azure AI Custom Vision service allows you to build, deploy, and improve your own custom image classifiers and object detectors, tailored to your specific needs.</p>
+            <div class="sub-topic-grid grid-cols-1 md:grid-cols-2">
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title"><span class="emoji-icon">🔧</span>Concept of Custom Vision</h4>
+                    <div class="details-content text-sm">
+                        <p><strong>Concept:</strong> Enables you to train your own computer vision models by providing your own labeled images. You don't need deep machine learning expertise.</p>
+                        <p><strong>Two Project Types:</strong></p>
+                        <ul>
+                            <li><strong>Image Classification:</strong> Train a model to categorize images based on custom tags you define (e.g., different types of company products, specific architectural styles).</li>
+                            <li><strong>Object Detection:</strong> Train a model to identify and locate specific objects within images by drawing bounding boxes and labeling them (e.g., detecting defects on a manufacturing line, identifying specific components in an image).</li>
+                        </ul>
+                        <p><strong>Process (High-Level):</strong></p>
+                        <ol>
+                            <li>Create a project (Classification or Object Detection).</li>
+                            <li>Upload and tag your images.</li>
+                            <li>Train the model. Custom Vision handles the algorithm selection and training process.</li>
+                            <li>Evaluate the model's performance.</li>
+                            <li>Deploy the trained model as an API endpoint or export it for offline use (e.g., on mobile devices).</li>
+                        </ol>
+                         <div class="image-placeholder"><p>Imagine the Custom Vision portal: UI for uploading images, drawing bounding boxes (for object detection), assigning tags, and a "Train" button.</p></div>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title"><span class="emoji-icon">🎯</span>Use Cases for Custom Vision</h4>
+                    <div class="details-content text-sm">
+                        <p>Custom Vision is ideal when pre-trained models (like those in Azure AI Vision) are not specific enough for your task.</p>
+                        <ul>
+                            <li><strong>Retail:</strong> Identifying specific products on shelves, detecting empty shelf spaces.</li>
+                            <li><strong>Manufacturing:</strong> Quality control by detecting defects or anomalies in products.</li>
+                            <li><strong>Healthcare:</strong> Identifying specific types of cells or anomalies in medical images (requires domain expertise and careful validation).</li>
+                            <li><strong>Agriculture:</strong> Detecting diseased plants or identifying specific crop types.</li>
+                            <li><strong>Security:</strong> Identifying specific objects or unauthorized items in security footage.</li>
+                            <li><strong>Nature Conservation:</strong> Identifying specific animal species for tracking.</li>
+                        </ul>
+                        <p>The key is that you have a unique visual recognition problem that requires a model trained on your own specific image data.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="exam-tip">
+                <p><strong>Exam Tip:</strong> Understand that Custom Vision is for building *your own* image classification and object detection models. Know when to use it (when pre-trained models are insufficient) and the basic workflow (upload/tag images, train, deploy).</p>
+            </div>
+        </section>
+
+        <section id="doc-intelligence" class="content-section mb-16">
+            <h2 class="section-title" style="color: #047857; border-color: #059669;">Azure Form Recognizer / Azure AI Document Intelligence</h2>
+            <p class="section-intro-text">Azure AI Document Intelligence (formerly Azure Form Recognizer) is a service that uses AI to extract text, key-value pairs, tables, and structures from documents.</p>
+            <div class="sub-topic-grid grid-cols-1">
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title"><span class="emoji-icon">📜</span>Extracting Information from Documents</h4>
+                    <div class="details-content text-sm">
+                        <p><strong>Concept:</strong> Goes beyond simple OCR by understanding the structure and semantics of documents like forms, invoices, receipts, and more.</p>
+                        <p><strong>Key Capabilities:</strong></p>
+                        <ul>
+                            <li><strong>Pre-built Models:</strong> For common document types like invoices, receipts, ID cards, business cards. These models are trained to extract specific fields relevant to those document types.</li>
+                            <li><strong>Custom Models:</strong> You can train custom models to extract information from documents specific to your business (e.g., custom insurance forms, industry-specific reports). This involves labeling a few example documents.</li>
+                            <li><strong>Layout Model:</strong> Extracts text, tables, selection marks, and document structure (like titles, paragraphs) from documents.</li>
+                            <li><strong>Data Extraction:</strong>
+                                <ul>
+                                    <li><strong>Key-Value Pairs:</strong> Identifies field names and their corresponding values (e.g., "Invoice Number": "INV-123").</li>
+                                    <li><strong>Tables:</strong> Extracts data from tables, maintaining row and column relationships.</li>
+                                    <li><strong>Selection Marks:</strong> Detects checkboxes or radio buttons and their state (selected/unselected).</li>
+                                </ul>
+                            </li>
+                        </ul>
+                        <p><strong>Example JSON Output (Conceptual for Invoice Key-Value Pair):</strong></p>
+                        <div class="json-example">
+                            <pre>
+{
+  "documents": [
+    {
+      "docType": "invoice",
+      "fields": {
+        "InvoiceId": { "type": "string", "value": "INV-001", "confidence": 0.99 },
+        "InvoiceDate": { "type": "date", "value": "2023-10-26", "confidence": 0.98 },
+        "Total": { "type": "number", "value": 150.75, "confidence": 0.95 }
+      }
+    }
+  ]
+}
+                            </pre>
+                        </div>
+                        <p><strong>Use Case:</strong> Automating data entry from invoices into accounting systems, processing insurance claims, digitizing patient intake forms, extracting data from contracts.</p>
+                         <div class="image-placeholder"><p>Imagine the Document Intelligence Studio: UI for uploading documents, seeing extracted key-value pairs and tables highlighted, and options for training custom models.</p></div>
+                    </div>
+                </div>
+            </div>
+            <div class="exam-tip">
+                <p><strong>Exam Tip:</strong> Understand that Azure AI Document Intelligence (Form Recognizer) is for extracting structured data (key-value pairs, tables) from documents, going beyond basic OCR. Know that it offers pre-built models for common forms and the ability to train custom models.</p>
+            </div>
+        </section>
+
+        <footer class="text-center mt-12 py-8 border-t border-slate-200">
+            <p class="text-slate-600">&copy; <span id="currentYear"></span> Revature - AI-900 Certification Preparation. All rights reserved.</p>
+            <p class="text-slate-500 mt-1">Seeing the World with Azure AI!</p>
+        </footer>
+
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+            // Smooth scrolling for nav links
+            document.querySelectorAll('nav a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        // Adjust for fixed navbar height
+                        const navbarHeight = document.querySelector('nav').offsetHeight;
+                        const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset - navbarHeight;
+                        
+                        window.scrollTo({
+                            top: targetPosition,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+
+            // Setup for expandable cards
+            function setupExpandableCards() {
+                const sections = document.querySelectorAll('.content-section');
+                sections.forEach(section => {
+                    const cards = section.querySelectorAll('.sub-topic-card');
+                    cards.forEach(card => {
+                        const titleElement = card.querySelector('.sub-topic-card-title');
+                        const details = card.querySelector('.details-content');
+
+                        if (titleElement && details) {
+                            details.style.display = 'none'; 
+                            titleElement.addEventListener('click', () => {
+                                const isHidden = details.style.display === 'none';
+                                // Close other open cards within the same grid
+                                const parentGrid = card.closest('.sub-topic-grid');
+                                if (parentGrid) {
+                                    parentGrid.querySelectorAll('.sub-topic-card').forEach(otherCard => {
+                                        if (otherCard !== card) {
+                                            const otherDetails = otherCard.querySelector('.details-content');
+                                            if (otherDetails) otherDetails.style.display = 'none';
+                                            otherCard.classList.remove('active-item');
+                                        }
+                                    });
+                                }
+                                
+                                details.style.display = isHidden ? 'block' : 'none';
+                                if (isHidden) {
+                                    card.classList.add('active-item');
+                                } else {
+                                    card.classList.remove('active-item');
+                                }
+                            });
+                        }
+                    });
+                });
+            }
+            setupExpandableCards();
+        });
+    </script>
+</body>
+</html>

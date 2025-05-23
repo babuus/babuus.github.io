@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-900 Cert Prep: Class 1 - Intro to AI & Responsible AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Visualization & Content Choices:
+        - Overview of AI on Azure: Goal: Introduce AI concepts and Azure AI. Method: Grid of clickable cards for AI workloads, Azure AI platform. Lib: HTML/CSS/JS. Content expanded.
+        - Responsible AI Principles: Goal: Detail each principle. Method: Grid of clickable cards for Fairness, Reliability/Safety, Privacy/Security, Inclusiveness, Transparency, Accountability. Lib: HTML/CSS/JS. Content expanded.
+        - Azure's Commitment: Goal: Briefly explain Microsoft's stance. Method: Clickable card for tools/guidelines. Lib: HTML/CSS/JS. Content expanded.
+        - Footer: Static content.
+        - No charts needed; focus on interactive text and conceptual explanations. All AI features removed. Layout consistent with enhanced PL-300 guides.
+    -->
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #f1f5f9; /* slate-100 */
+        }
+        .container {
+            max-width: 1200px;
+        }
+        .section-title { 
+            font-size: 2rem; 
+            font-weight: 700; 
+            margin-bottom: 1rem; 
+            color: #0284c7; /* sky-600 */
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #0ea5e9; /* sky-500 */
+            display: inline-block;
+        }
+        .section-intro-text { 
+            margin-bottom: 2rem; 
+            color: #475569; /* slate-600 */
+            font-size: 1.125rem; /* text-lg */
+            line-height: 1.75;
+        }
+        
+        .sub-topic-grid { 
+            display: grid; 
+            gap: 1.5rem; /* gap-6 */
+        }
+        
+        .sub-topic-card { 
+            background-color: white; 
+            border-radius: 0.75rem; /* rounded-xl */
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.05);
+            padding: 1.5rem; /* p-6 */
+            border: 1px solid #e2e8f0; /* slate-200 */
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            display: flex; 
+            flex-direction: column; 
+        }
+        .sub-topic-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.07), 0 4px 6px -4px rgba(0,0,0,0.07);
+        }
+        .sub-topic-card-title { 
+            font-size: 1.25rem; /* text-xl */
+            font-weight: 600; 
+            color: #075985; /* sky-800 */
+            margin-bottom: 0.5rem; /* mb-2 */
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .sub-topic-card-title .emoji-icon { 
+            margin-right: 0.5rem;
+            font-size: 1.3em; 
+        }
+        .sub-topic-card-title::after {
+            content: '▼'; 
+            font-size: 0.8em;
+            color: #94a3b8; /* slate-400 */
+            transition: transform 0.3s ease;
+        }
+        .sub-topic-card.active-item .sub-topic-card-title::after {
+            transform: rotate(180deg); 
+        }
+         .sub-topic-card.active-item {
+            border-left: 5px solid #0ea5e9; /* sky-500 */
+            background-color: #f7fafc; 
+        }
+        .details-content { 
+            display: none; 
+            margin-top: 1rem; /* mt-4 */
+            padding: 1.25rem; /* p-5 */
+            background-color: #f8fafc; /* slate-50 */
+            border-radius: 0.5rem; /* rounded-lg */
+            border: 1px solid #e2e8f0; /* slate-200 */
+            color: #334155; /* slate-700 */
+            line-height: 1.6;
+            flex-grow: 1; 
+        }
+        .details-content p, .details-content ul {
+            margin-bottom: 0.75rem; /* mb-3 */
+        }
+        .details-content ul {
+            list-style-position: inside;
+            padding-left: 0.5rem; /* pl-2 */
+        }
+        .details-content strong {
+            color: #0369a1; /* sky-700 */
+        }
+        .details-content .code-example { 
+            background-color: #e0f2fe; 
+            padding: 0.75rem;
+            border-radius: 0.375rem; 
+            margin-top: 0.5rem;
+            border-left: 3px solid #0ea5e9; 
+            font-family: 'Courier New', Courier, monospace;
+            white-space: pre-wrap; 
+        }
+
+        .exam-tip { 
+            background-color: #e0f2fe; 
+            border-left: 5px solid #0ea5e9; 
+            padding: 1.25rem; 
+            margin-top: 1.5rem; 
+            border-radius: 0.5rem; 
+            color: #0c4a6e; 
+        }
+        .exam-tip p:last-child { margin-bottom: 0; }
+        .exam-tip strong { color: #0369a1; }
+
+        .nav-link { transition: color 0.3s, border-bottom-color 0.3s; padding-bottom: 0.25rem; }
+        .nav-link:hover { color: #0ea5e9; border-bottom: 2px solid #0ea5e9; }
+        .content-section { padding-top: 5rem; margin-top: -4.5rem; } 
+        
+        .header-main {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%); /* Emerald/Green gradient for AI-900 */
+            padding: 2rem 0; /* Internal padding for content within header-main */
+            margin-top: 4rem; /* Added to push header-main down below the fixed navbar (navbar height is approx 4rem) */
+            margin-bottom: 3rem; 
+            border-bottom-left-radius: 1rem;
+            border-bottom-right-radius: 1rem;
+        }
+        .header-main h1 { /* Adjusted for better visibility */
+            color: white;
+            font-size: 2.25rem; /* text-4xl (Tailwind) */
+            line-height: 1.2; /* Tighter line height for wrapped text */
+        }
+         .header-main p {
+            color: #d1fae5; /* emerald-100 */
+            font-size: 1.125rem; 
+        }
+        .intro-card {
+            border-left: 5px solid #10b981; /* emerald-500 */
+            padding-top: 1.5rem;
+            padding-right: 1.5rem;
+            padding-bottom: 1.5rem;
+            padding-left: 2rem; /* Increased left padding */
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800">
+
+    <nav class="bg-white shadow-lg fixed w-full z-20 top-0">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" class="text-2xl font-bold text-emerald-700">AI-900 Prep: Class 1</a>
+            <div class="space-x-1 sm:space-x-2 md:space-x-3 text-xs sm:text-sm md:text-base">
+                <a href="#overview-ai-azure" class="nav-link text-slate-700">AI Overview</a>
+                <a href="#responsible-ai" class="nav-link text-slate-700">Responsible AI</a>
+                <a href="#azure-commitment" class="nav-link text-slate-700">Azure & RAI</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="header-main">
+        <div class="container mx-auto px-6 text-center">
+            <h1 class="font-bold text-3xl md:text-4xl leading-tight">Introduction to AI on Azure & Responsible AI 🧠🛡️</h1>
+            <p class="mt-2">Interactive Guide for AI-900 Certification - Session 1</p>
+        </div>
+    </div>
+
+    <div class="container mx-auto px-6 py-8">
+
+        <section id="introduction-ai900-class1" class="mb-12 card intro-card">
+             <h2 class="section-title" style="font-size: 1.75rem; margin-bottom: 1rem; border-bottom: none; display: block; color: #047857;">Welcome to Session 1!</h2>
+             <p class="mb-4 text-slate-700 leading-relaxed">This initial session lays the groundwork for your Azure AI journey. We'll explore common AI workloads, get introduced to the Azure AI platform, and critically, dive deep into the principles of Responsible AI – a major focus for the AI-900 exam and modern AI development.</p>
+             <p class="font-semibold text-slate-700">Today's Focus (Approx. 20-25% of exam):</p>
+             <ul class="list-disc list-inside ml-4 space-y-1 text-slate-600">
+                <li>Overview of Artificial Intelligence on Azure.</li>
+                <li>Responsible AI Principles: Fairness, Reliability & Safety, Privacy & Security, Inclusiveness, Transparency, and Accountability.</li>
+                <li>Azure's Commitment to Responsible AI.</li>
+             </ul>
+             <p class="mt-4 font-semibold text-emerald-600">Let's begin exploring the exciting world of AI on Azure responsibly!</p>
+        </section>
+
+        <section id="overview-ai-azure" class="content-section mb-16">
+            <h2 class="section-title" style="color: #047857; border-color: #059669;">Overview of Artificial Intelligence on Azure</h2>
+            <p class="section-intro-text">Artificial Intelligence (AI) aims to create systems that can perform tasks typically requiring human intelligence. Azure provides a comprehensive platform to build, deploy, and manage AI solutions.</p>
+            <div class="sub-topic-grid grid-cols-1 md:grid-cols-2">
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title"><span class="emoji-icon">🤖</span>What is AI & Common AI Workloads</h4>
+                    <div class="details-content text-sm">
+                        <p><strong>Artificial Intelligence (AI)</strong> refers to the capability of a computer system to mimic human cognitive functions such as learning, problem-solving, and decision-making.</p>
+                        <p><strong>Common AI Workloads on Azure:</strong></p>
+                        <ul>
+                            <li><strong>Machine Learning (ML):</strong> Training models from data to make predictions or decisions. E.g., predicting customer churn, forecasting sales. Azure Machine Learning service.</li>
+                            <li><strong>Anomaly Detection:</strong> Identifying unusual patterns or outliers in data that do not conform to expected behavior. E.g., fraud detection, equipment failure prediction. Part of Azure Cognitive Services.</li>
+                            <li><strong>Computer Vision:</strong> Enabling systems to "see" and interpret visual information from images or videos. E.g., object detection, image classification, facial recognition. Azure Cognitive Services for Vision.</li>
+                            <li><strong>Natural Language Processing (NLP):</strong> Allowing computers to understand, interpret, and generate human language. E.g., sentiment analysis, language translation, text summarization. Azure Cognitive Services for Language.</li>
+                            <li><strong>Conversational AI:</strong> Building chatbots and virtual assistants that can engage in natural conversations. E.g., customer service bots, voice assistants. Azure Bot Service, Cognitive Services (Speech, Language).</li>
+                            <li><strong>Generative AI:</strong> Creating new, original content (text, images, code, etc.) based on patterns learned from existing data. E.g., content creation, code generation, synthetic data. Azure OpenAI Service.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title"><span class="emoji-icon">☁️</span>Introduction to Azure AI</h4>
+                    <div class="details-content text-sm">
+                        <p><strong>Azure AI</strong> is a portfolio of AI services and tools built on Microsoft Azure, designed to help developers and data scientists build intelligent applications.</p>
+                        <p><strong>Key Components & Offerings:</strong></p>
+                        <ul>
+                            <li><strong>Azure Cognitive Services:</strong> Pre-built, customizable AI models for common tasks (Vision, Speech, Language, Decision, OpenAI). Requires minimal ML expertise.</li>
+                            <li><strong>Azure Machine Learning:</strong> A comprehensive cloud service for building, training, deploying, and managing machine learning models at scale. For all skill levels, from no-code (Automated ML, Designer) to code-first (SDKs, CLI).</li>
+                            <li><strong>Azure Bot Service:</strong> Platform for developing intelligent bots that can interact naturally with users.</li>
+                            <li><strong>Azure Databricks & Azure Synapse Analytics:</strong> Offer capabilities for big data processing and analytics, often used in conjunction with AI workloads.</li>
+                            <li><strong>Infrastructure:</strong> Powerful GPUs and compute options for training complex AI models.</li>
+                        </ul>
+                        <p>Azure AI aims to democratize AI, making it accessible for various use cases and skill levels.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="exam-tip">
+                <p><strong>Exam Tip:</strong> Be able to identify and briefly describe common AI workloads (ML, Vision, NLP, etc.). Understand that Azure AI provides a range of services from pre-built models (Cognitive Services) to platforms for custom ML development (Azure Machine Learning).</p>
+            </div>
+        </section>
+
+        <section id="responsible-ai" class="content-section mb-16">
+            <h2 class="section-title" style="color: #047857; border-color: #059669;">Responsible AI Principles (CRITICAL for Exam)</h2>
+            <p class="section-intro-text">As AI becomes more pervasive, it's crucial to develop and deploy AI systems responsibly. Microsoft has defined six key principles to guide this effort. These are heavily tested on the AI-900 exam.</p>
+            <div class="sub-topic-grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title"><span class="emoji-icon">⚖️</span>Fairness</h4>
+                    <div class="details-content text-sm">
+                        <p><strong>Principle:</strong> AI systems should treat all people fairly and avoid affecting similarly situated groups of people in different ways.</p>
+                        <p><strong>Concerns:</strong> AI models can reflect or amplify existing societal biases present in training data, leading to unfair outcomes for certain demographic groups (e.g., based on gender, race, age).</p>
+                        <p><strong>Mitigation:</strong></p>
+                        <ul>
+                            <li>Assess training data for biases.</li>
+                            <li>Use fairness assessment tools (e.g., Fairlearn toolkit in Azure ML).</li>
+                            <li>Implement techniques to mitigate identified biases in models.</li>
+                            <li>Ensure diverse representation in development teams.</li>
+                        </ul>
+                        <p><strong>Example:</strong> An AI loan approval system should not unfairly deny loans to qualified applicants based on their ethnicity.</p>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title"><span class="emoji-icon">🛡️</span>Reliability & Safety</h4>
+                    <div class="details-content text-sm">
+                        <p><strong>Principle:</strong> AI systems should perform reliably, safely, and consistently according to their designed purpose, and should not cause unintended harm.</p>
+                        <p><strong>Concerns:</strong> AI systems might fail in unexpected ways, especially in new or unforeseen situations. Errors can have significant consequences, particularly in safety-critical applications.</p>
+                        <p><strong>Mitigation:</strong></p>
+                        <ul>
+                            <li>Rigorous testing and validation across diverse conditions.</li>
+                            <li>Monitoring system performance and implementing safeguards.</li>
+                            <li>Designing for resilience and graceful degradation.</li>
+                            <li>Clear operational guidelines and human oversight where necessary.</li>
+                        </ul>
+                        <p><strong>Example:</strong> An autonomous vehicle's AI should reliably detect obstacles and operate safely under various weather conditions.</p>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title"><span class="emoji-icon">🔒</span>Privacy & Security</h4>
+                    <div class="details-content text-sm">
+                        <p><strong>Principle:</strong> AI systems should be secure and respect privacy. They must handle data responsibly, protecting it from unauthorized access, use, or disclosure.</p>
+                        <p><strong>Concerns:</strong> AI systems often process large amounts of data, including sensitive personal information. Data breaches or misuse can lead to significant harm.</p>
+                        <p><strong>Mitigation:</strong></p>
+                        <ul>
+                            <li>Implement robust data security measures (encryption, access controls).</li>
+                            <li>Adhere to privacy regulations (e.g., GDPR, CCPA).</li>
+                            <li>Use techniques like de-identification, anonymization, or differential privacy where appropriate.</li>
+                            <li>Secure the AI models themselves from attacks (e.g., model inversion, poisoning).</li>
+                        </ul>
+                        <p><strong>Example:</strong> A healthcare AI analyzing patient data must ensure patient confidentiality and protect data from breaches.</p>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title"><span class="emoji-icon">🌍</span>Inclusiveness</h4>
+                    <div class="details-content text-sm">
+                        <p><strong>Principle:</strong> AI systems should empower everyone and engage people. They should be designed to be inclusive of diverse human needs, experiences, and perspectives.</p>
+                        <p><strong>Concerns:</strong> AI systems might inadvertently exclude or perform poorly for certain groups if not designed with diversity in mind (e.g., voice recognition systems struggling with certain accents or languages).</p>
+                        <p><strong>Mitigation:</strong></p>
+                        <ul>
+                            <li>Consider a wide range of human diversity (e.g., abilities, cultural backgrounds, languages) during design and testing.</li>
+                            <li>Ensure training data is representative.</li>
+                            <li>Involve diverse user groups in the development process.</li>
+                            <li>Provide accessibility features.</li>
+                        </ul>
+                        <p><strong>Example:</strong> A translation AI should strive to support a wide range of languages and dialects accurately, not just dominant ones.</p>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title"><span class="emoji-icon">🔍</span>Transparency</h4>
+                    <div class="details-content text-sm">
+                        <p><strong>Principle:</strong> AI systems should be understandable. People should be aware when they are interacting with an AI system, and be able to understand its capabilities, limitations, and how it makes decisions (explainability).</p>
+                        <p><strong>Concerns:</strong> "Black box" AI models can make it difficult to understand why a particular decision was made, eroding trust and making it hard to identify errors or biases.</p>
+                        <p><strong>Mitigation:</strong></p>
+                        <ul>
+                            <li>Provide clear documentation about the AI system.</li>
+                            <li>Use interpretable models where possible.</li>
+                            <li>Employ explainability techniques (e.g., feature importance, LIME, SHAP in Azure ML) to understand model predictions.</li>
+                            <li>Clearly disclose AI usage to users.</li>
+                        </ul>
+                        <p><strong>Example:</strong> If an AI system denies a credit application, it should be possible to understand the key factors that led to that decision.</p>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title"><span class="emoji-icon">🧑‍⚖️</span>Accountability</h4>
+                    <div class="details-content text-sm">
+                        <p><strong>Principle:</strong> People should be accountable for AI systems. Those who design and deploy AI systems are responsible for how their systems operate and ensuring they adhere to ethical principles and legal standards.</p>
+                        <p><strong>Concerns:</strong> Diffused responsibility can make it hard to assign accountability when AI systems cause harm or make errors.</p>
+                        <p><strong>Mitigation:</strong></p>
+                        <ul>
+                            <li>Establish clear lines of responsibility and oversight for AI systems.</li>
+                            <li>Implement governance frameworks, ethical review boards, and audit trails.</li>
+                            <li>Ensure compliance with relevant laws and regulations.</li>
+                            <li>Foster a culture of responsibility within development teams.</li>
+                        </ul>
+                        <p><strong>Example:</strong> An organization deploying an AI hiring tool must be accountable for ensuring it doesn't discriminate and for addressing any issues that arise.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="exam-tip">
+                <p><strong>Exam Tip:</strong> You MUST know all six Responsible AI principles by name and understand their core meaning and implications. Be prepared for scenario-based questions asking which principle is most relevant or potentially violated.</p>
+            </div>
+        </section>
+
+        <section id="azure-commitment" class="content-section mb-16">
+            <h2 class="section-title" style="color: #047857; border-color: #059669;">Azure's Commitment to Responsible AI</h2>
+            <p class="section-intro-text">Microsoft is committed to advancing AI responsibly and provides various resources and tools to help developers and organizations build trustworthy AI systems on Azure.</p>
+            <div class="sub-topic-grid grid-cols-1">
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title"><span class="emoji-icon">🤝</span>Microsoft's Tools & Guidelines</h4>
+                    <div class="details-content text-sm">
+                        <p>Microsoft operationalizes its Responsible AI principles through a combination of internal governance, research, and by providing tools and resources to customers:</p>
+                        <ul>
+                            <li><strong>Responsible AI Standard:</strong> A framework Microsoft uses internally to guide the development and deployment of its own AI systems. It outlines specific requirements and best practices aligned with the six principles.</li>
+                            <li><strong>AI Fairness Checklist:</strong> A practical tool to help identify and mitigate potential fairness issues throughout the AI lifecycle.</li>
+                            <li><strong>InterpretML & Fairlearn Toolkits:</strong> Integrated into Azure Machine Learning, these open-source toolkits help with model interpretability (understanding predictions) and fairness assessment/mitigation.</li>
+                            <li><strong>Responsible AI Dashboard in Azure ML:</strong> Provides a centralized view for model debugging, including error analysis, data explorer, interpretability, fairness checks, and causal analysis.</li>
+                            <li><strong>Azure Cognitive Services:</strong> Many services have built-in considerations for responsible use, with guidelines on their application (e.g., for facial recognition).</li>
+                            <li><strong>Documentation and Learning Resources:</strong> Extensive documentation on Microsoft Learn about Responsible AI principles, best practices, and how to use Azure tools to implement them.</li>
+                        </ul>
+                        <p>Microsoft emphasizes that Responsible AI is a socio-technical challenge, requiring not just technology but also appropriate human oversight, processes, and organizational culture.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="exam-tip">
+                <p><strong>Exam Tip:</strong> Be aware that Microsoft provides specific tools (like Fairlearn, InterpretML, Responsible AI Dashboard) and standards to support responsible AI development on Azure. Understand that it's a shared responsibility between Microsoft (as the platform provider) and the organizations building AI solutions.</p>
+            </div>
+        </section>
+
+        <footer class="text-center mt-12 py-8 border-t border-slate-200">
+            <p class="text-slate-600">&copy; <span id="currentYear"></span> Revature - AI-900 Certification Preparation. All rights reserved.</p>
+            <p class="text-slate-500 mt-1">Building AI Responsibly!</p>
+        </footer>
+
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+            // Smooth scrolling for nav links
+            document.querySelectorAll('nav a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({ behavior: 'smooth' });
+                    }
+                });
+            });
+
+            // Setup for expandable cards
+            function setupExpandableCards() {
+                const sections = document.querySelectorAll('.content-section');
+                sections.forEach(section => {
+                    const cards = section.querySelectorAll('.sub-topic-card');
+                    cards.forEach(card => {
+                        const titleElement = card.querySelector('.sub-topic-card-title');
+                        const details = card.querySelector('.details-content');
+
+                        if (titleElement && details) {
+                            details.style.display = 'none'; 
+                            titleElement.addEventListener('click', () => {
+                                const isHidden = details.style.display === 'none';
+                                // Close other open cards within the same grid
+                                const parentGrid = card.closest('.sub-topic-grid');
+                                if (parentGrid) {
+                                    parentGrid.querySelectorAll('.sub-topic-card').forEach(otherCard => {
+                                        if (otherCard !== card) {
+                                            const otherDetails = otherCard.querySelector('.details-content');
+                                            if (otherDetails) otherDetails.style.display = 'none';
+                                            otherCard.classList.remove('active-item');
+                                        }
+                                    });
+                                }
+                                
+                                details.style.display = isHidden ? 'block' : 'none';
+                                if (isHidden) {
+                                    card.classList.add('active-item');
+                                } else {
+                                    card.classList.remove('active-item');
+                                }
+                            });
+                        }
+                    });
+                });
+            }
+            setupExpandableCards();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-900 Cert Prep: Class 3 - ML Principles on Azure - Part 2</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 
+        Session 3: Fundamental Principles of Machine Learning on Azure - Part 2
+        Objective: Explore key capabilities within Azure Machine Learning for building and managing models.
+        - AutoML: Concept, Benefits, Common tasks.
+        - Azure ML Designer: Concept, Benefits.
+        - Model Management & Deployment: Registering, Deploying (real-time vs. batch).
+        - Teaching Tips: Screenshots/videos for AutoML/Designer, When to use which tool.
+    -->
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #f1f5f9; /* slate-100 */
+        }
+        .container {
+            max-width: 1200px;
+        }
+        .section-title { 
+            font-size: 2rem; 
+            font-weight: 700; 
+            margin-bottom: 1rem; 
+            color: #0284c7; /* sky-600 */
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #0ea5e9; /* sky-500 */
+            display: inline-block;
+        }
+        .section-intro-text { 
+            margin-bottom: 2rem; 
+            color: #475569; /* slate-600 */
+            font-size: 1.125rem; /* text-lg */
+            line-height: 1.75;
+        }
+        
+        .sub-topic-grid { 
+            display: grid; 
+            gap: 1.5rem; /* gap-6 */
+        }
+        
+        .sub-topic-card { 
+            background-color: white; 
+            border-radius: 0.75rem; /* rounded-xl */
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.05);
+            padding: 1.5rem; /* p-6 */
+            border: 1px solid #e2e8f0; /* slate-200 */
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            display: flex; 
+            flex-direction: column; 
+        }
+        .sub-topic-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.07), 0 4px 6px -4px rgba(0,0,0,0.07);
+        }
+        .sub-topic-card-title { 
+            font-size: 1.25rem; /* text-xl */
+            font-weight: 600; 
+            color: #075985; /* sky-800 */
+            margin-bottom: 0.5rem; /* mb-2 */
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .sub-topic-card-title .emoji-icon { 
+            margin-right: 0.5rem;
+            font-size: 1.3em; 
+        }
+        .sub-topic-card-title::after {
+            content: '▼'; 
+            font-size: 0.8em;
+            color: #94a3b8; /* slate-400 */
+            transition: transform 0.3s ease;
+        }
+        .sub-topic-card.active-item .sub-topic-card-title::after {
+            transform: rotate(180deg); 
+        }
+         .sub-topic-card.active-item {
+            border-left: 5px solid #0ea5e9; /* sky-500 */
+            background-color: #f7fafc; 
+        }
+        .details-content { 
+            display: none; 
+            margin-top: 1rem; /* mt-4 */
+            padding: 1.25rem; /* p-5 */
+            background-color: #f8fafc; /* slate-50 */
+            border-radius: 0.5rem; /* rounded-lg */
+            border: 1px solid #e2e8f0; /* slate-200 */
+            color: #334155; /* slate-700 */
+            line-height: 1.6;
+            flex-grow: 1; 
+        }
+        .details-content p, .details-content ul {
+            margin-bottom: 0.75rem; /* mb-3 */
+        }
+        .details-content ul {
+            list-style-position: inside;
+            padding-left: 0.5rem; /* pl-2 */
+        }
+        .details-content strong {
+            color: #0369a1; /* sky-700 */
+        }
+        .details-content .code-example { 
+            background-color: #e0f2fe; 
+            padding: 0.75rem;
+            border-radius: 0.375rem; 
+            margin-top: 0.5rem;
+            border-left: 3px solid #0ea5e9; 
+            font-family: 'Courier New', Courier, monospace;
+            white-space: pre-wrap; 
+        }
+
+        .exam-tip { 
+            background-color: #e0f2fe; 
+            border-left: 5px solid #0ea5e9; 
+            padding: 1.25rem; 
+            margin-top: 1.5rem; 
+            border-radius: 0.5rem; 
+            color: #0c4a6e; 
+        }
+        .exam-tip p:last-child { margin-bottom: 0; }
+        .exam-tip strong { color: #0369a1; }
+
+        .nav-link { transition: color 0.3s, border-bottom-color 0.3s; padding-bottom: 0.25rem; }
+        .nav-link:hover { color: #0ea5e9; border-bottom: 2px solid #0ea5e9; }
+        .content-section { padding-top: 5rem; margin-top: -4.5rem; } 
+        
+        .header-main {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%); /* Emerald/Green gradient */
+            padding: 2rem 0; 
+            margin-top: 4rem; /* Account for fixed navbar height */
+            margin-bottom: 3rem; 
+            border-bottom-left-radius: 1rem;
+            border-bottom-right-radius: 1rem;
+        }
+        .header-main h1 { 
+            color: white;
+            font-size: 2.25rem; 
+            line-height: 1.2; 
+        }
+         .header-main p {
+            color: #d1fae5; /* emerald-100 */
+            font-size: 1.125rem; 
+        }
+        .intro-card {
+            border-left: 5px solid #10b981; /* emerald-500 */
+            padding-top: 1.5rem;
+            padding-right: 1.5rem;
+            padding-bottom: 1.5rem;
+            padding-left: 2rem; 
+        }
+        .interface-placeholder {
+            background-color: #e9ecef; /* A light grey background */
+            border: 2px dashed #adb5bd; /* Dashed border */
+            padding: 1.5rem;
+            text-align: center;
+            color: #495057; /* Darker grey text */
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800">
+
+    <nav class="bg-white shadow-lg fixed w-full z-20 top-0">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" class="text-2xl font-bold text-emerald-700">AI-900 Prep: Class 3</a>
+            <div class="space-x-1 sm:space-x-2 md:space-x-3 text-xs sm:text-sm md:text-base">
+                <a href="#automl" class="nav-link text-slate-700">AutoML</a>
+                <a href="#designer" class="nav-link text-slate-700">Designer</a>
+                <a href="#model-management" class="nav-link text-slate-700">Model Management</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="header-main">
+        <div class="container mx-auto px-6 text-center">
+            <h1 class="font-bold text-3xl md:text-4xl leading-tight">Fundamental Principles of Machine Learning on Azure - Part 2 🛠️🚀</h1>
+            <p class="mt-2">Interactive Guide for AI-900 Certification - Session 3</p>
+        </div>
+    </div>
+
+    <div class="container mx-auto px-6 py-8">
+
+        <section id="introduction-ai900-class3" class="mb-12 card intro-card">
+             <h2 class="section-title" style="font-size: 1.75rem; margin-bottom: 1rem; border-bottom: none; display: block; color: #047857;">Welcome to Session 3!</h2>
+             <p class="mb-4 text-slate-700 leading-relaxed">Building on our last session, today we'll explore key capabilities within Azure Machine Learning that simplify and accelerate the process of building and managing models. We'll look at Automated ML, the Azure ML Designer, and conceptual aspects of model management and deployment.</p>
+             <p class="font-semibold text-slate-700">Objective: Explore key capabilities within Azure Machine Learning for building and managing models.</p>
+             <p class="font-semibold text-slate-700 mt-2">Today's Focus (Approx. 25-30% of exam combined with Session 2):</p>
+             <ul class="list-disc list-inside ml-4 space-y-1 text-slate-600">
+                <li>Automated Machine Learning (AutoML): Concept, benefits, and common tasks.</li>
+                <li>Azure ML Designer: Concept and benefits of the visual interface.</li>
+                <li>Conceptual Model Management: Registering models.</li>
+                <li>Conceptual Model Deployment: Understanding real-time vs. batch inference.</li>
+             </ul>
+             <p class="mt-4 font-semibold text-emerald-600">Let's uncover more powerful tools in Azure ML!</p>
+        </section>
+
+        <section id="automl" class="content-section mb-16">
+            <h2 class="section-title" style="color: #047857; border-color: #059669;">Automated Machine Learning (AutoML)</h2>
+            <p class="section-intro-text">Automated Machine Learning, or AutoML, is a powerful capability in Azure ML that automates many of the time-consuming, iterative tasks of machine learning model development.</p>
+            <div class="sub-topic-grid grid-cols-1 md:grid-cols-2">
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title"><span class="emoji-icon">🤖</span>Concept of AutoML</h4>
+                    <div class="details-content text-sm">
+                        <p><strong>AutoML automates the process of model selection and hyperparameter tuning.</strong> Given a dataset and a defined task (like classification or regression), AutoML iterates through various machine learning algorithms and their hyperparameter settings to find the best performing model for your data.</p>
+                        <p><strong>How it works (High-Level):</strong></p>
+                        <ul>
+                            <li>You specify your dataset and the target variable you want to predict.</li>
+                            <li>You define the ML task (e.g., classification, regression, time-series forecasting).</li>
+                            <li>AutoML then intelligently tries different combinations of data preprocessing steps, algorithms, and hyperparameters.</li>
+                            <li>It evaluates each combination based on a chosen metric (e.g., accuracy, AUC, R-squared).</li>
+                            <li>Finally, it presents the best model(s) found during the process.</li>
+                        </ul>
+                        <div class="interface-placeholder">
+                           <p>Imagine a screenshot here of the Azure ML Studio AutoML interface: You'd see options to select your data, choose the task type, configure experiment settings, and then view a list of models tried with their performance metrics.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title"><span class="emoji-icon">✨</span>Benefits of AutoML</h4>
+                    <div class="details-content text-sm">
+                        <p>AutoML offers several significant advantages:</p>
+                        <ul>
+                            <li><strong>Speed & Efficiency:</strong> Drastically reduces the time it takes to develop and compare multiple models. What could take days or weeks of manual effort can often be done in hours.</li>
+                            <li><strong>Accessibility:</strong> Lowers the barrier to entry for machine learning. Individuals without deep expertise in specific algorithms or hyperparameter tuning can still build effective models.</li>
+                            <li><strong>Improved Performance:</strong> By systematically exploring a wide range of options, AutoML can often find models that perform as well as, or even better than, those developed manually.</li>
+                            <li><strong>Productivity for Experts:</strong> Frees up experienced data scientists from repetitive tasks, allowing them to focus on more complex aspects of the problem, such as feature engineering or interpreting results.</li>
+                            <li><strong>Best Practices:</strong> Incorporates best practices for data preprocessing and model selection.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title"><span class="emoji-icon">📋</span>Common Tasks for AutoML</h4>
+                    <div class="details-content text-sm">
+                        <p>AutoML in Azure ML is well-suited for several common machine learning tasks:</p>
+                        <ul>
+                            <li><strong>Classification:</strong>
+                                <ul>
+                                    <li>Predicting a categorical outcome.</li>
+                                    <li><strong>Examples:</strong> Customer churn prediction (churn/no churn), fraud detection (fraudulent/legitimate), image classification (object categories).</li>
+                                </ul>
+                            </li>
+                            <li><strong>Regression:</strong>
+                                <ul>
+                                    <li>Predicting a continuous numerical value.</li>
+                                    <li><strong>Examples:</strong> Predicting product demand, forecasting energy consumption, estimating house prices.</li>
+                                </ul>
+                            </li>
+                            <li><strong>Time-Series Forecasting:</strong>
+                                <ul>
+                                    <li>Predicting future values based on historical time-ordered data.</li>
+                                    <li><strong>Examples:</strong> Sales forecasting, stock price prediction, weather forecasting. AutoML has specific capabilities to handle the temporal nature of this data.</li>
+                                </ul>
+                            </li>
+                        </ul>
+                         <p>While AutoML can also be used for NLP tasks like text classification and computer vision tasks like image classification and object detection (often leveraging Azure Cognitive Services capabilities under the hood or through specific integrations), the core classification/regression/forecasting are primary focuses.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="exam-tip">
+                <p><strong>Exam Tip:</strong> Understand that AutoML automates model selection and tuning. Know its key benefits (speed, accessibility) and the common tasks it supports (classification, regression, forecasting). You don't need to know how to configure an AutoML run in detail, but grasp its purpose and value.</p>
+            </div>
+        </section>
+
+        <section id="designer" class="content-section mb-16">
+            <h2 class="section-title" style="color: #047857; border-color: #059669;">Azure ML Designer</h2>
+            <p class="section-intro-text">Azure ML Designer provides a visual, drag-and-drop interface for building, testing, and deploying machine learning pipelines without writing code.</p>
+            <div class="sub-topic-grid grid-cols-1 md:grid-cols-2">
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title"><span class="emoji-icon">🎨</span>Concept of Azure ML Designer</h4>
+                    <div class="details-content text-sm">
+                        <p><strong>Azure ML Designer allows you to construct ML workflows (pipelines) by connecting pre-built modules.</strong> These modules represent common ML tasks like data input, data preprocessing, model training, and model scoring.</p>
+                        <p><strong>Key Features:</strong></p>
+                        <ul>
+                            <li><strong>Visual Interface:</strong> Drag modules onto a canvas and connect them to define the data flow and processing steps.</li>
+                            <li><strong>Pre-built Modules:</strong> A rich library of modules for data handling, feature engineering, statistical functions, ML algorithms, and model evaluation.</li>
+                            <li><strong>Custom Code Integration:</strong> While primarily no-code/low-code, you can incorporate custom Python or R scripts as modules if needed.</li>
+                            <li><strong>Pipeline Creation:</strong> Enables the creation of reusable and shareable ML pipelines.</li>
+                        </ul>
+                        <div class="interface-placeholder">
+                           <p>Imagine a screenshot here of the Azure ML Designer interface: A canvas area where modules (like "Select Columns in Dataset", "Split Data", "Train Model", "Score Model") are dragged from a palette and connected with lines to form a pipeline.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title"><span class="emoji-icon">👍</span>Benefits of Azure ML Designer</h4>
+                    <div class="details-content text-sm">
+                        <p>The Designer offers distinct advantages, especially for certain users and scenarios:</p>
+                        <ul>
+                            <li><strong>No-Code/Low-Code Approach:</strong> Makes ML accessible to users who may not be proficient programmers (e.g., business analysts, citizen data scientists).</li>
+                            <li><strong>Rapid Prototyping:</strong> Quickly build and test different ML workflows visually.</li>
+                            <li><strong>Ease of Understanding:</strong> The visual nature of pipelines makes it easier to understand the overall ML process and data flow.</li>
+                            <li><strong>Collaboration:</strong> Visual pipelines can be more easily shared and understood by team members with varying technical backgrounds.</li>
+                            <li><strong>Learning Tool:</strong> Can be a good way to learn about different ML algorithms and processes by experimenting with modules.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+             <div class="sub-topic-grid grid-cols-1 mt-6"> <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title"><span class="emoji-icon">🤔</span>When to Use AutoML vs. Designer vs. Code-First</h4>
+                    <div class="details-content text-sm">
+                        <p>Azure ML offers multiple ways to build models, catering to different needs and skill levels. Here's a conceptual guide:</p>
+                        <ul>
+                            <li><strong>Automated ML (AutoML):</strong>
+                                <ul>
+                                    <li><strong>Use When:</strong> You want to quickly find the best performing model for a standard task (classification, regression, forecasting) without manual algorithm selection or extensive hyperparameter tuning. Ideal for speed, benchmarking, or when you have limited ML expertise.</li>
+                                    <li><strong>Focus:</strong> Automation of model selection and optimization.</li>
+                                </ul>
+                            </li>
+                            <li><strong>Azure ML Designer:</strong>
+                                <ul>
+                                    <li><strong>Use When:</strong> You prefer a visual, drag-and-drop approach to build and customize ML pipelines. Good for users who want more control than AutoML but prefer not to write extensive code. Excellent for rapid prototyping and explaining workflows.</li>
+                                    <li><strong>Focus:</strong> Visual pipeline construction with pre-built modules.</li>
+                                </ul>
+                            </li>
+                            <li><strong>Code-First (SDKs/CLI - e.g., Python with Azure ML SDK):</strong>
+                                <ul>
+                                    <li><strong>Use When:</strong> You need maximum flexibility, custom algorithms, complex preprocessing, or want to integrate ML workflows into larger software engineering projects. Preferred by experienced data scientists and ML engineers who are comfortable with coding.</li>
+                                    <li><strong>Focus:</strong> Full control and customization through programming. (Note: AI-900 focuses less on deep coding aspects).</li>
+                                </ul>
+                            </li>
+                        </ul>
+                        <p>These approaches are not mutually exclusive; for example, a model found by AutoML could potentially be further customized or integrated into a larger pipeline using code.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="exam-tip">
+                <p><strong>Exam Tip:</strong> Understand that Azure ML Designer is a visual tool for building ML pipelines. Know its benefits (no-code/low-code, rapid prototyping). Be able to conceptually differentiate when you might choose AutoML, Designer, or a code-first approach based on the scenario and user expertise.</p>
+            </div>
+        </section>
+
+        <section id="model-management" class="content-section mb-16">
+            <h2 class="section-title" style="color: #047857; border-color: #059669;">Model Management & Deployment (Conceptual)</h2>
+            <p class="section-intro-text">Once a machine learning model is trained, it needs to be managed and deployed to make predictions on new data. Azure ML provides capabilities for this lifecycle.</p>
+            <div class="sub-topic-grid grid-cols-1 md:grid-cols-2">
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title"><span class="emoji-icon">🗳️</span>Registering Models</h4>
+                    <div class="details-content text-sm">
+                        <p><strong>Model registration</strong> is the process of storing and versioning your trained machine learning models in your Azure ML workspace.</p>
+                        <p><strong>Purpose & Benefits:</strong></p>
+                        <ul>
+                            <li><strong>Centralized Repository:</strong> Provides a single place to store all your trained models.</li>
+                            <li><strong>Versioning:</strong> Allows you to keep track of different versions of a model as you retrain or improve it. This is crucial for reproducibility and rollback if needed.</li>
+                            <li><strong>Metadata Tracking:</strong> You can associate metadata with each registered model, such as the training script used, performance metrics, tags, and descriptions.</li>
+                            <li><strong>Facilitates Deployment:</strong> Registered models can be easily selected for deployment to various target environments.</li>
+                            <li><strong>Auditability & Governance:</strong> Helps in tracking model lineage and managing the model lifecycle.</li>
+                        </ul>
+                        <p>Think of the model registry in Azure ML as a library for your trained models, making them organized, versioned, and ready for deployment.</p>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title"><span class="emoji-icon">🌍</span>Deploying Models as Endpoints</h4>
+                    <div class="details-content text-sm">
+                        <p><strong>Model deployment</strong> is the process of making your trained model available to other applications or systems so it can make predictions on new, unseen data.</p>
+                        <p>Azure ML typically deploys models as <strong>endpoints</strong>, which are essentially web services that can be called over HTTP.</p>
+                        <p><strong>Two Main Types of Inference Endpoints (Conceptual):</strong></p>
+                        <ul>
+                            <li><strong>Real-time Inference (Online Endpoints):</strong>
+                                <ul>
+                                    <li><strong>Concept:</strong> The model is deployed as a web service that can provide predictions immediately (low latency) upon receiving a request with new data.</li>
+                                    <li><strong>Use Case:</strong> Suitable for applications requiring instant predictions, such as fraud detection during a transaction, product recommendations on a website, or live language translation.</li>
+                                    <li><strong>How it works:</strong> An application sends a request with input data to the endpoint, and the endpoint returns the prediction in real-time. Often deployed to Azure Kubernetes Service (AKS) or Azure Container Instances (ACI) for scalability and reliability.</li>
+                                </ul>
+                            </li>
+                            <li><strong>Batch Inference (Batch Endpoints):</strong>
+                                <ul>
+                                    <li><strong>Concept:</strong> The model processes a large volume of data (a "batch") at once and stores the predictions for later use. This is not typically for immediate, low-latency responses.</li>
+                                    <li><strong>Use Case:</strong> Suitable for scenarios where you need to score large datasets periodically, such as daily sales forecasting, processing large sets of images overnight, or generating customer segment labels for a marketing campaign.</li>
+                                    <li><strong>How it works:</strong> A job is triggered (often on a schedule) that takes a batch of input data, runs it through the model, and writes the predictions to a specified output location (e.g., Azure Blob Storage).</li>
+                                </ul>
+                            </li>
+                        </ul>
+                         <p>Understanding the difference between real-time and batch inference is key for choosing the right deployment strategy.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="exam-tip">
+                <p><strong>Exam Tip:</strong> Know that registering models in Azure ML helps with versioning and management. Understand the conceptual difference between real-time inference (for immediate predictions on single/few instances) and batch inference (for scoring large datasets periodically). You don't need to know the specific steps to deploy, but the "what" and "why" of these concepts.</p>
+            </div>
+        </section>
+
+        <footer class="text-center mt-12 py-8 border-t border-slate-200">
+            <p class="text-slate-600">&copy; <span id="currentYear"></span> Revature - AI-900 Certification Preparation. All rights reserved.</p>
+            <p class="text-slate-500 mt-1">Mastering Azure ML Capabilities!</p>
+        </footer>
+
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+            // Smooth scrolling for nav links
+            document.querySelectorAll('nav a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        // Adjust for fixed navbar height
+                        const navbarHeight = document.querySelector('nav').offsetHeight;
+                        const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset - navbarHeight;
+                        
+                        window.scrollTo({
+                            top: targetPosition,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+
+            // Setup for expandable cards
+            function setupExpandableCards() {
+                const sections = document.querySelectorAll('.content-section');
+                sections.forEach(section => {
+                    const cards = section.querySelectorAll('.sub-topic-card');
+                    cards.forEach(card => {
+                        const titleElement = card.querySelector('.sub-topic-card-title');
+                        const details = card.querySelector('.details-content');
+
+                        if (titleElement && details) {
+                            details.style.display = 'none'; 
+                            titleElement.addEventListener('click', () => {
+                                const isHidden = details.style.display === 'none';
+                                // Close other open cards within the same grid
+                                const parentGrid = card.closest('.sub-topic-grid');
+                                if (parentGrid) {
+                                    parentGrid.querySelectorAll('.sub-topic-card').forEach(otherCard => {
+                                        if (otherCard !== card) {
+                                            const otherDetails = otherCard.querySelector('.details-content');
+                                            if (otherDetails) otherDetails.style.display = 'none';
+                                            otherCard.classList.remove('active-item');
+                                        }
+                                    });
+                                }
+                                
+                                details.style.display = isHidden ? 'block' : 'none';
+                                if (isHidden) {
+                                    card.classList.add('active-item');
+                                } else {
+                                    card.classList.remove('active-item');
+                                }
+                            });
+                        }
+                    });
+                });
+            }
+            setupExpandableCards();
+        });
+    </script>
+</body>
+</html>

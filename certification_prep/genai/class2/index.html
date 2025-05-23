@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-900 Cert Prep: Class 2 - ML Principles on Azure - Part 1</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 
+        Session 2: Fundamental Principles of Machine Learning on Azure - Part 1
+        Objective: Understand core machine learning concepts and how Azure Machine Learning service facilitates them.
+        - Recap of Core ML Concepts: Regression, Classification, Clustering, Features/Labels, Training/Validation datasets.
+        - Intro to Azure ML: What it is, Workspaces, Compute, Data Assets (conceptual).
+        - Teaching Tips: High-level Azure ML Studio diagram explanation.
+    -->
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #f1f5f9; /* slate-100 */
+        }
+        .container {
+            max-width: 1200px;
+        }
+        .section-title { 
+            font-size: 2rem; 
+            font-weight: 700; 
+            margin-bottom: 1rem; 
+            color: #0284c7; /* sky-600 */
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #0ea5e9; /* sky-500 */
+            display: inline-block;
+        }
+        .section-intro-text { 
+            margin-bottom: 2rem; 
+            color: #475569; /* slate-600 */
+            font-size: 1.125rem; /* text-lg */
+            line-height: 1.75;
+        }
+        
+        .sub-topic-grid { 
+            display: grid; 
+            gap: 1.5rem; /* gap-6 */
+        }
+        
+        .sub-topic-card { 
+            background-color: white; 
+            border-radius: 0.75rem; /* rounded-xl */
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.05);
+            padding: 1.5rem; /* p-6 */
+            border: 1px solid #e2e8f0; /* slate-200 */
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            display: flex; 
+            flex-direction: column; 
+        }
+        .sub-topic-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.07), 0 4px 6px -4px rgba(0,0,0,0.07);
+        }
+        .sub-topic-card-title { 
+            font-size: 1.25rem; /* text-xl */
+            font-weight: 600; 
+            color: #075985; /* sky-800 */
+            margin-bottom: 0.5rem; /* mb-2 */
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .sub-topic-card-title .emoji-icon { 
+            margin-right: 0.5rem;
+            font-size: 1.3em; 
+        }
+        .sub-topic-card-title::after {
+            content: '▼'; 
+            font-size: 0.8em;
+            color: #94a3b8; /* slate-400 */
+            transition: transform 0.3s ease;
+        }
+        .sub-topic-card.active-item .sub-topic-card-title::after {
+            transform: rotate(180deg); 
+        }
+         .sub-topic-card.active-item {
+            border-left: 5px solid #0ea5e9; /* sky-500 */
+            background-color: #f7fafc; 
+        }
+        .details-content { 
+            display: none; 
+            margin-top: 1rem; /* mt-4 */
+            padding: 1.25rem; /* p-5 */
+            background-color: #f8fafc; /* slate-50 */
+            border-radius: 0.5rem; /* rounded-lg */
+            border: 1px solid #e2e8f0; /* slate-200 */
+            color: #334155; /* slate-700 */
+            line-height: 1.6;
+            flex-grow: 1; 
+        }
+        .details-content p, .details-content ul {
+            margin-bottom: 0.75rem; /* mb-3 */
+        }
+        .details-content ul {
+            list-style-position: inside;
+            padding-left: 0.5rem; /* pl-2 */
+        }
+        .details-content strong {
+            color: #0369a1; /* sky-700 */
+        }
+        .details-content .code-example { 
+            background-color: #e0f2fe; 
+            padding: 0.75rem;
+            border-radius: 0.375rem; 
+            margin-top: 0.5rem;
+            border-left: 3px solid #0ea5e9; 
+            font-family: 'Courier New', Courier, monospace;
+            white-space: pre-wrap; 
+        }
+
+        .exam-tip { 
+            background-color: #e0f2fe; 
+            border-left: 5px solid #0ea5e9; 
+            padding: 1.25rem; 
+            margin-top: 1.5rem; 
+            border-radius: 0.5rem; 
+            color: #0c4a6e; 
+        }
+        .exam-tip p:last-child { margin-bottom: 0; }
+        .exam-tip strong { color: #0369a1; }
+
+        .nav-link { transition: color 0.3s, border-bottom-color 0.3s; padding-bottom: 0.25rem; }
+        .nav-link:hover { color: #0ea5e9; border-bottom: 2px solid #0ea5e9; }
+        .content-section { padding-top: 5rem; margin-top: -4.5rem; } 
+        
+        .header-main {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%); /* Emerald/Green gradient */
+            padding: 2rem 0; 
+            margin-top: 4rem; /* Account for fixed navbar height */
+            margin-bottom: 3rem; 
+            border-bottom-left-radius: 1rem;
+            border-bottom-right-radius: 1rem;
+        }
+        .header-main h1 { 
+            color: white;
+            font-size: 2.25rem; 
+            line-height: 1.2; 
+        }
+         .header-main p {
+            color: #d1fae5; /* emerald-100 */
+            font-size: 1.125rem; 
+        }
+        .intro-card {
+            border-left: 5px solid #10b981; /* emerald-500 */
+            padding-top: 1.5rem;
+            padding-right: 1.5rem;
+            padding-bottom: 1.5rem;
+            padding-left: 2rem; 
+        }
+        .diagram-placeholder {
+            background-color: #e9ecef; /* A light grey background */
+            border: 2px dashed #adb5bd; /* Dashed border */
+            padding: 2rem;
+            text-align: center;
+            color: #495057; /* Darker grey text */
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800">
+
+    <nav class="bg-white shadow-lg fixed w-full z-20 top-0">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" class="text-2xl font-bold text-emerald-700">AI-900 Prep: Class 2</a>
+            <div class="space-x-1 sm:space-x-2 md:space-x-3 text-xs sm:text-sm md:text-base">
+                <a href="#ml-concepts-recap" class="nav-link text-slate-700">ML Concepts</a>
+                <a href="#intro-azure-ml" class="nav-link text-slate-700">Azure ML Intro</a>
+                </div>
+        </div>
+    </nav>
+
+    <div class="header-main">
+        <div class="container mx-auto px-6 text-center">
+            <h1 class="font-bold text-3xl md:text-4xl leading-tight">Fundamental Principles of Machine Learning on Azure - Part 1 📊⚙️</h1>
+            <p class="mt-2">Interactive Guide for AI-900 Certification - Session 2</p>
+        </div>
+    </div>
+
+    <div class="container mx-auto px-6 py-8">
+
+        <section id="introduction-ai900-class2" class="mb-12 card intro-card">
+             <h2 class="section-title" style="font-size: 1.75rem; margin-bottom: 1rem; border-bottom: none; display: block; color: #047857;">Welcome to Session 2!</h2>
+             <p class="mb-4 text-slate-700 leading-relaxed">This session dives into the fundamental principles of machine learning and introduces how these are applied within the Azure Machine Learning service. We'll build on your existing GenAI knowledge to quickly cover core ML concepts before exploring Azure's powerful ML platform.</p>
+             <p class="font-semibold text-slate-700">Objective: Understand core machine learning concepts and how Azure Machine Learning service facilitates them.</p>
+             <p class="font-semibold text-slate-700 mt-2">Today's Focus (Approx. 25-30% of exam combined with Session 3):</p>
+             <ul class="list-disc list-inside ml-4 space-y-1 text-slate-600">
+                <li>Recap of Core Machine Learning Concepts (Regression, Classification, Clustering).</li>
+                <li>Understanding Features, Labels, Training, and Validation Datasets.</li>
+                <li>Introduction to Azure Machine Learning (Azure ML) service.</li>
+                <li>Key conceptual components of Azure ML: Workspaces, Compute, and Data Assets.</li>
+             </ul>
+             <p class="mt-4 font-semibold text-emerald-600">Let's explore how Azure empowers machine learning!</p>
+        </section>
+
+        <section id="ml-concepts-recap" class="content-section mb-16">
+            <h2 class="section-title" style="color: #047857; border-color: #059669;">Recap of Core Machine Learning Concepts</h2>
+            <p class="section-intro-text">Leveraging your background in GenAI, we'll quickly refresh key machine learning paradigms. Understanding these is crucial before diving into how Azure implements them.</p>
+            <div class="sub-topic-grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title"><span class="emoji-icon">📈</span>Regression</h4>
+                    <div class="details-content text-sm">
+                        <p><strong>Regression</strong> is a supervised learning technique used to predict a continuous numerical value.</p>
+                        <p><strong>Goal:</strong> To find a mathematical function that best maps input features to a continuous output variable.</p>
+                        <ul>
+                            <li><strong>Example:</strong> Predicting house prices based on features like size, number of bedrooms, and location.</li>
+                            <li><strong>Another Example:</strong> Forecasting future sales based on historical sales data, marketing spend, and seasonality.</li>
+                        </ul>
+                        <p>Think of it as drawing a line (or curve) that best fits the data points to make predictions for new, unseen data.</p>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title"><span class="emoji-icon">🎯</span>Classification</h4>
+                    <div class="details-content text-sm">
+                        <p><strong>Classification</strong> is a supervised learning technique used to predict a categorical label or class.</p>
+                        <p><strong>Goal:</strong> To assign input data to one of several predefined categories.</p>
+                        <ul>
+                            <li><strong>Example:</strong> Email spam detection (spam or not spam).</li>
+                            <li><strong>Another Example:</strong> Image recognition (classifying an image as a cat, dog, or car).</li>
+                            <li><strong>Binary Classification:</strong> Two possible outcomes (e.g., yes/no, true/false).</li>
+                            <li><strong>Multi-class Classification:</strong> More than two possible outcomes (e.g., identifying different types of flowers).</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title"><span class="emoji-icon">🔗</span>Clustering</h4>
+                    <div class="details-content text-sm">
+                        <p><strong>Clustering</strong> is an unsupervised learning technique used to group similar data points together based on their characteristics or features.</p>
+                        <p><strong>Goal:</strong> To discover inherent groupings in the data without predefined labels.</p>
+                        <ul>
+                            <li><strong>Example:</strong> Customer segmentation (grouping customers with similar purchasing behaviors for targeted marketing).</li>
+                            <li><strong>Another Example:</strong> Anomaly detection (identifying data points that don't belong to any cluster).</li>
+                            <li><strong>Key Idea:</strong> Data points within a cluster are more similar to each other than to those in other clusters.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title"><span class="emoji-icon">🏷️</span>Features and Labels</h4>
+                    <div class="details-content text-sm">
+                        <p>These are fundamental concepts in supervised learning.</p>
+                        <p><strong>Features (Input Variables):</strong> These are the individual measurable properties or characteristics of the data that are used for making predictions. They are the 'inputs' to your model.</p>
+                        <ul>
+                            <li><strong>Example (House Price Prediction):</strong> Size (sq ft), number of bedrooms, age of the house.</li>
+                        </ul>
+                        <p><strong>Labels (Output Variable / Target):</strong> This is the value or category you are trying to predict. It's the 'output' or 'answer' your model learns to produce.</p>
+                        <ul>
+                            <li><strong>Example (House Price Prediction):</strong> The actual price of the house.</li>
+                            <li><strong>Example (Spam Detection):</strong> Whether an email is 'spam' or 'not spam'.</li>
+                        </ul>
+                        <p>In unsupervised learning like clustering, you primarily work with features as there are no predefined labels.</p>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title"><span class="emoji-icon">⚖️</span>Training and Validation Datasets</h4>
+                    <div class="details-content text-sm">
+                        <p>To build and evaluate machine learning models effectively, data is typically split into at least two sets:</p>
+                        <p><strong>Training Dataset:</strong></p>
+                        <ul>
+                            <li>This is the subset of data used to 'teach' or 'train' the machine learning model.</li>
+                            <li>The model learns patterns, relationships, and parameters from this data.</li>
+                            <li>Typically the largest portion of your data (e.g., 70-80%).</li>
+                        </ul>
+                        <p><strong>Validation Dataset (or Test Dataset):</strong></p>
+                        <ul>
+                            <li>This subset of data is used to evaluate the performance of the trained model on unseen data.</li>
+                            <li>It helps to check if the model generalizes well to new data and isn't just memorizing the training data (overfitting).</li>
+                            <li>Sometimes, a separate 'test set' is kept aside for a final, unbiased evaluation after model tuning with the validation set.</li>
+                        </ul>
+                        <p>The split ensures an objective assessment of the model's predictive power.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="exam-tip">
+                <p><strong>Exam Tip:</strong> Be able to differentiate between regression, classification, and clustering. Understand the role of features, labels, and the importance of splitting data into training and validation/test sets for model development and evaluation.</p>
+            </div>
+        </section>
+
+        <section id="intro-azure-ml" class="content-section mb-16">
+            <h2 class="section-title" style="color: #047857; border-color: #059669;">Introduction to Azure Machine Learning (Azure ML)</h2>
+            <p class="section-intro-text">Azure Machine Learning (Azure ML) is Microsoft's cloud-based service for accelerating and managing the end-to-end machine learning lifecycle. It's designed for data scientists and ML engineers of all skill levels.</p>
+            <div class="sub-topic-grid grid-cols-1 md:grid-cols-2">
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title"><span class="emoji-icon">🚀</span>What is Azure ML?</h4>
+                    <div class="details-content text-sm">
+                        <p><strong>Azure Machine Learning</strong> is a comprehensive platform that provides tools and services to build, train, deploy, and manage machine learning models at scale.</p>
+                        <p><strong>Key Capabilities:</strong></p>
+                        <ul>
+                            <li><strong>End-to-End Lifecycle Management:</strong> From data preparation and model training to deployment and monitoring (MLOps).</li>
+                            <li><strong>Versatility:</strong> Supports various approaches, including code-first (Python SDK, CLI), low-code (Designer), and no-code (Automated ML).</li>
+                            <li><strong>Scalability:</strong> Leverages Azure's cloud infrastructure for scalable compute and storage.</li>
+                            <li><strong>Collaboration:</strong> Facilitates teamwork with shared workspaces, version control, and asset management.</li>
+                            <li><strong>Responsible AI:</strong> Integrates tools for model interpretability, fairness assessment, and data privacy.</li>
+                        </ul>
+                        <p>It aims to democratize ML, making it accessible for diverse use cases and skill sets, from beginners to expert data scientists.</p>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title"><span class="emoji-icon">🏛️</span>Azure ML Workspaces</h4>
+                    <div class="details-content text-sm">
+                        <p>The <strong>Azure Machine Learning Workspace</strong> is the foundational component and the top-level organizational unit in Azure ML.</p>
+                        <p><strong>Purpose:</strong></p>
+                        <ul>
+                            <li><strong>Centralized Hub:</strong> It acts as a central place to manage all the artifacts you create and use when you perform machine learning tasks.</li>
+                            <li><strong>Collaboration:</strong> Enables teams to share datasets, experiments, models, compute resources, and more.</li>
+                            <li><strong>Security and Governance:</strong> Provides mechanisms for access control, role-based access, and resource management.</li>
+                        </ul>
+                        <p><strong>What it contains (conceptually):</strong> When you create a workspace, several Azure resources are automatically created or linked, including Azure Storage (for data and model storage), Azure Container Registry (for Docker images), Azure Application Insights (for monitoring), and Azure Key Vault (for secrets).</p>
+                        <p>Think of it as your project's headquarters for all things ML on Azure.</p>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title"><span class="emoji-icon">💻</span>Compute Resources (Conceptual)</h4>
+                    <div class="details-content text-sm">
+                        <p>Azure ML allows you to leverage various compute resources for different stages of the ML lifecycle. You don't need to manage the underlying infrastructure directly.</p>
+                        <p><strong>Key Types (Conceptual Understanding):</strong></p>
+                        <ul>
+                            <li><strong>Compute Instances:</strong>
+                                <ul>
+                                    <li><strong>Purpose:</strong> These are fully managed cloud-based workstations, pre-configured with ML tools and environments (like Jupyter, VS Code integration).</li>
+                                    <li><strong>Use Case:</strong> Ideal for development, experimentation, and running notebooks. Think of it as your personal ML development machine in the cloud.</li>
+                                </ul>
+                            </li>
+                            <li><strong>Compute Clusters:</strong>
+                                <ul>
+                                    <li><strong>Purpose:</strong> Scalable clusters of virtual machines (CPUs or GPUs) that can automatically scale up or down based on demand.</li>
+                                    <li><strong>Use Case:</strong> Used for training machine learning models at scale, running batch inference, or performing data processing tasks that require significant computational power.</li>
+                                </ul>
+                            </li>
+                            <li><strong>Inference Clusters (e.g., Azure Kubernetes Service - AKS):</strong>
+                                <ul>
+                                     <li><strong>Purpose:</strong> Used for deploying trained models as web services for real-time predictions. AKS provides robust, scalable, and managed Kubernetes environments.</li>
+                                     <li><strong>Use Case:</strong> Production deployment of models that need to serve live requests.</li>
+                                </ul>
+                            </li>
+                        </ul>
+                        <p>The key is to understand <em>what each type of compute is for</em>, rather than the specifics of creating them in the Azure portal (as we don't have access for demos).</p>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title"><span class="emoji-icon">💾</span>Data Assets (Conceptual)</h4>
+                    <div class="details-content text-sm">
+                        <p>Effectively managing data is crucial for any ML project. Azure ML provides ways to connect to and manage your data.</p>
+                        <p><strong>Key Concepts:</strong></p>
+                        <ul>
+                            <li><strong>Datastores:</strong>
+                                <ul>
+                                    <li><strong>Purpose:</strong> These are references or connections to your existing Azure storage services (like Azure Blob Storage, Azure Data Lake Storage). They don't move your data but provide a secure way for Azure ML to access it.</li>
+                                    <li><strong>Benefit:</strong> Centralizes data access information, making it easier to manage credentials and connect to various data sources.</li>
+                                </ul>
+                            </li>
+                            <li><strong>Datasets (now called Data Assets):</strong>
+                                <ul>
+                                    <li><strong>Purpose:</strong> Represent a specific versioned collection of data that you intend to use for an ML task. They can point to files in datastores or web URLs.</li>
+                                    <li><strong>Benefit:</strong> Enable data versioning, tracking, and easier consumption in ML pipelines and experiments. You can think of them as pointers to your data, with added metadata and versioning capabilities.</li>
+                                    <li><strong>Types:</strong> Can be tabular (structured data) or file-based (images, text files, etc.).</li>
+                                </ul>
+                            </li>
+                        </ul>
+                        <p>Understanding these concepts helps in organizing and accessing data efficiently within Azure ML projects.</p>
+                    </div>
+                </div>
+                 <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title"><span class="emoji-icon">🖼️</span>Azure ML Studio - A Visual Overview (Conceptual)</h4>
+                    <div class="details-content text-sm">
+                        <p><strong>Azure Machine Learning Studio</strong> is the web-based user interface for your Azure ML workspace. It provides a graphical way to interact with all your ML assets and tools.</p>
+                        <p><strong>Teaching Tip (No Azure Access):</strong> Since we can't do a live demo, imagine a high-level architectural diagram or a screenshot of the Studio. It typically has several key sections:</p>
+                        <ul>
+                            <li><strong>Authoring Section:</strong>
+                                <ul>
+                                    <li><strong>Notebooks:</strong> For code-based development (Python, R).</li>
+                                    <li><strong>Automated ML:</strong> To automatically train and tune models without extensive coding.</li>
+                                    <li><strong>Designer:</strong> A drag-and-drop interface to build ML pipelines visually.</li>
+                                </ul>
+                            </li>
+                            <li><strong>Assets Section:</strong>
+                                <ul>
+                                    <li><strong>Data:</strong> To manage Datasets and Datastores.</li>
+                                    <li><strong>Jobs (Experiments):</strong> To track training runs and their results.</li>
+                                    <li><strong>Models:</strong> A registry for your trained models.</li>
+                                    <li><strong>Endpoints:</strong> To manage deployed models serving predictions.</li>
+                                    <li><strong>Components:</strong> Reusable building blocks for pipelines.</li>
+                                    <li><strong>Environments:</strong> To manage Python environments and Docker configurations.</li>
+                                </ul>
+                            </li>
+                            <li><strong>Manage Section:</strong>
+                                <ul>
+                                    <li><strong>Compute:</strong> To create and manage compute instances and clusters.</li>
+                                    <li><strong>Linked Services:</strong> Connections to other Azure services.</li>
+                                </ul>
+                            </li>
+                        </ul>
+                        <p>The goal here is to understand the <em>purpose of these different areas</em> within the Studio and how they map to the ML lifecycle (data prep, training, deployment, management).</p>
+                        <div class="diagram-placeholder">
+                           <p>Imagine a diagram here showing the main panes of Azure ML Studio: A left navigation bar for "Authoring", "Assets", and "Manage", and a central area where you'd interact with notebooks, designer, models, etc.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="exam-tip">
+                <p><strong>Exam Tip:</strong> For the AI-900, focus on what Azure ML is, the role of a Workspace, and the conceptual purpose of different compute resources (instances for dev, clusters for training) and data assets (datastores for connection, datasets for data representation). Understand that Azure ML Studio is the web UI to manage these components.</p>
+            </div>
+        </section>
+
+        <footer class="text-center mt-12 py-8 border-t border-slate-200">
+            <p class="text-slate-600">&copy; <span id="currentYear"></span> Revature - AI-900 Certification Preparation. All rights reserved.</p>
+            <p class="text-slate-500 mt-1">Empowering Your Azure ML Journey!</p>
+        </footer>
+
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+            // Smooth scrolling for nav links
+            document.querySelectorAll('nav a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        // Adjust for fixed navbar height
+                        const navbarHeight = document.querySelector('nav').offsetHeight;
+                        const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset - navbarHeight;
+                        
+                        window.scrollTo({
+                            top: targetPosition,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+
+            // Setup for expandable cards
+            function setupExpandableCards() {
+                const sections = document.querySelectorAll('.content-section');
+                sections.forEach(section => {
+                    const cards = section.querySelectorAll('.sub-topic-card');
+                    cards.forEach(card => {
+                        const titleElement = card.querySelector('.sub-topic-card-title');
+                        const details = card.querySelector('.details-content');
+
+                        if (titleElement && details) {
+                            details.style.display = 'none'; 
+                            titleElement.addEventListener('click', () => {
+                                const isHidden = details.style.display === 'none';
+                                // Close other open cards within the same grid
+                                const parentGrid = card.closest('.sub-topic-grid');
+                                if (parentGrid) {
+                                    parentGrid.querySelectorAll('.sub-topic-card').forEach(otherCard => {
+                                        if (otherCard !== card) {
+                                            const otherDetails = otherCard.querySelector('.details-content');
+                                            if (otherDetails) otherDetails.style.display = 'none';
+                                            otherCard.classList.remove('active-item');
+                                        }
+                                    });
+                                }
+                                
+                                details.style.display = isHidden ? 'block' : 'none';
+                                if (isHidden) {
+                                    card.classList.add('active-item');
+                                } else {
+                                    card.classList.remove('active-item');
+                                }
+                            });
+                        }
+                    });
+                });
+            }
+            setupExpandableCards();
+        });
+    </script>
+</body>
+</html>

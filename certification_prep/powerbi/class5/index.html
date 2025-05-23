@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PL-300 Cert Prep: Class 5 - Managing Workspaces, Datasets & Reports</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Visualization & Content Choices: 
+        - Workspace Management: Goal: Explain creation & roles. Method: Grid of clickable cards for creating/managing, roles/permissions. Lib: HTML/CSS/JS. Content expanded.
+        - Dataset Management: Goal: Detail service operations. Method: Grid of clickable cards for publishing, refresh/gateways, RLS, endorsing. Lib: HTML/CSS/JS. Content expanded.
+        - Sharing & Distribution: Goal: Explain methods. Method: Grid of clickable cards for sharing reports/dashboards, Apps, exporting. Lib: HTML/CSS/JS. Content expanded.
+        - Footer: Static content.
+        - No charts needed; focus on interactive text. All AI features removed. Layout consistent with enhanced Class 1/3/4.
+    -->
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #f1f5f9; /* slate-100 */
+        }
+        .container {
+            max-width: 1200px;
+        }
+        .section-title { 
+            font-size: 2rem; 
+            font-weight: 700; 
+            margin-bottom: 1rem; 
+            color: #0284c7; /* sky-600 */
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #0ea5e9; /* sky-500 */
+            display: inline-block;
+        }
+        .section-intro-text { 
+            margin-bottom: 2rem; 
+            color: #475569; /* slate-600 */
+            font-size: 1.125rem; /* text-lg */
+            line-height: 1.75;
+        }
+        
+        .sub-topic-grid { 
+            display: grid; 
+            gap: 1.5rem; /* gap-6 */
+        }
+        
+        .sub-topic-card { 
+            background-color: white; 
+            border-radius: 0.75rem; /* rounded-xl */
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.05);
+            padding: 1.5rem; /* p-6 */
+            border: 1px solid #e2e8f0; /* slate-200 */
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .sub-topic-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.07), 0 4px 6px -4px rgba(0,0,0,0.07);
+        }
+        .sub-topic-card-title { 
+            font-size: 1.25rem; /* text-xl */
+            font-weight: 600; 
+            color: #075985; /* sky-800 */
+            margin-bottom: 0.5rem; /* mb-2 */
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .sub-topic-card-title::after {
+            content: '▼'; 
+            font-size: 0.8em;
+            color: #94a3b8; /* slate-400 */
+            transition: transform 0.3s ease;
+        }
+        .sub-topic-card.active-item .sub-topic-card-title::after {
+            transform: rotate(180deg); 
+        }
+         .sub-topic-card.active-item {
+            border-left: 5px solid #0ea5e9; /* sky-500 */
+            background-color: #f7fafc; 
+        }
+        .details-content { 
+            display: none; 
+            margin-top: 1rem; /* mt-4 */
+            padding: 1.25rem; /* p-5 */
+            background-color: #f8fafc; /* slate-50 */
+            border-radius: 0.5rem; /* rounded-lg */
+            border: 1px solid #e2e8f0; /* slate-200 */
+            color: #334155; /* slate-700 */
+            line-height: 1.6;
+        }
+        .details-content p, .details-content ul {
+            margin-bottom: 0.75rem; /* mb-3 */
+        }
+        .details-content ul {
+            list-style-position: inside;
+            padding-left: 0.5rem; /* pl-2 */
+        }
+        .details-content strong {
+            color: #0369a1; /* sky-700 */
+        }
+        .details-content .code-example {
+            background-color: #e0f2fe; /* sky-100 */
+            padding: 0.75rem;
+            border-radius: 0.375rem; /* rounded-md */
+            margin-top: 0.5rem;
+            border-left: 3px solid #0ea5e9; /* sky-500 */
+            font-family: 'Courier New', Courier, monospace;
+            white-space: pre-wrap; 
+        }
+
+        .exam-tip { 
+            background-color: #e0f2fe; 
+            border-left: 5px solid #0ea5e9; 
+            padding: 1.25rem; 
+            margin-top: 1.5rem; 
+            border-radius: 0.5rem; 
+            color: #0c4a6e; 
+        }
+        .exam-tip p:last-child { margin-bottom: 0; }
+        .exam-tip strong { color: #0369a1; }
+
+
+        .nav-link { transition: color 0.3s, border-bottom-color 0.3s; padding-bottom: 0.25rem; }
+        .nav-link:hover { color: #0ea5e9; border-bottom: 2px solid #0ea5e9; }
+        .content-section { padding-top: 5rem; margin-top: -4.5rem; } 
+        .code-snippet { 
+            background-color: #e2e8f0; 
+            color: #1e293b; 
+            padding: 0.25rem 0.5rem; 
+            border-radius: 0.25rem; 
+            font-family: 'Courier New', Courier, monospace; 
+            font-size: 0.9em; 
+            border: 1px solid #cbd5e1; 
+        }
+        .header-main {
+             background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%); 
+             padding: 2rem 0;
+             margin-bottom: 3rem; 
+             border-bottom-left-radius: 1rem;
+             border-bottom-right-radius: 1rem;
+        }
+        .header-main h1 {
+            color: white;
+            font-size: 2.5rem; 
+        }
+         .header-main p {
+            color: #e0f2fe; 
+            font-size: 1.125rem; 
+        }
+        .intro-card {
+            border-left: 5px solid #0ea5e9;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800">
+
+    <nav class="bg-white shadow-lg fixed w-full z-20 top-0">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" class="text-2xl font-bold text-sky-700">PL-300 Prep: Class 5</a>
+            <div class="space-x-1 sm:space-x-2 md:space-x-3 text-xs sm:text-sm md:text-base">
+                <a href="#workspace-mgmt" class="nav-link text-slate-700">Workspaces</a>
+                <a href="#dataset-mgmt" class="nav-link text-slate-700">Datasets</a>
+                <a href="#sharing-distributing" class="nav-link text-slate-700">Share/Distribute</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="header-main">
+        <div class="container mx-auto px-6 text-center">
+            <h1 class="font-bold">Managing Workspaces, Datasets & Reports ⚙️</h1>
+            <p class="mt-2">Interactive Guide for PL-300 Certification - Session 5</p>
+        </div>
+    </div>
+
+    <div class="container mx-auto px-6 py-8">
+
+        <section id="introduction-pl300-class5" class="mb-12 card intro-card">
+             <h2 class="section-title" style="font-size: 1.75rem; margin-bottom: 1rem; border-bottom: none; display: block;">Welcome to Session 5!</h2>
+             <p class="mb-4 text-slate-700 leading-relaxed">After developing reports and datasets in Power BI Desktop, the next crucial step is deploying, managing, and sharing this content effectively using the Power BI service. This session covers workspace management, dataset maintenance, and various distribution strategies.</p>
+             <p class="font-semibold text-slate-700">Today's Focus (30 mins):</p>
+             <ul class="list-disc list-inside ml-4 space-y-1 text-slate-600">
+                <li>Workspace Management: Creating, managing, roles, and permissions.</li>
+                <li>Dataset Management in the Service: Publishing, refresh, gateways, RLS, endorsement.</li>
+                <li>Sharing and Distributing Content: Reports, dashboards, Apps, exporting.</li>
+             </ul>
+             <p class="mt-4 font-semibold text-sky-600">Let's master the Power BI service environment!</p>
+        </section>
+
+        <section id="workspace-mgmt" class="content-section mb-16">
+            <h2 class="section-title">Workspace Management</h2>
+            <p class="section-intro-text">Workspaces are collaborative environments in the Power BI service where you and your colleagues can work together on datasets, reports, dashboards, and dataflows.</p>
+            <div class="sub-topic-grid grid-cols-1 md:grid-cols-2">
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title">Creating & Managing Workspaces</h4>
+                    <div class="details-content text-sm">
+                        <p><strong>Purpose:</strong> Workspaces facilitate content organization, collaboration, and staged deployment (e.g., Dev, Test, Prod workspaces).</p>
+                        <p><strong>Workspace Types (Focus on New Experience/v2):</strong></p>
+                        <ul>
+                            <li><strong>My Workspace:</strong> A personal workspace for individual users. Content here cannot be shared in the same way as in collaborative workspaces and cannot be used to create Apps.</li>
+                            <li><strong>Collaborative Workspaces (New Experience/v2):</strong> The standard for teamwork.
+                                <ul>
+                                    <li>Created in the Power BI service.</li>
+                                    <li>Offer granular roles (Admin, Member, Contributor, Viewer).</li>
+                                    <li>Can be assigned to a Premium capacity for enhanced features and performance.</li>
+                                    <li>Allows creation of Power BI Apps for content distribution.</li>
+                                </ul>
+                            </li>
+                            <li><em>Classic Workspaces (v1):</em> Older type, often tied to Microsoft 365 groups. While you might encounter them, the exam focuses on the new experience.</li>
+                        </ul>
+                        <p><strong>Creating a New Experience Workspace:</strong></p>
+                        <ol>
+                            <li>In Power BI service, navigate to "Workspaces" -> "Create a workspace".</li>
+                            <li>Provide a unique name, description (optional).</li>
+                            <li>Advanced settings: Assign to Premium capacity, set contact list, choose default storage format (for large datasets).</li>
+                        </ol>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title">Roles & Permissions within Workspaces</h4>
+                    <div class="details-content text-sm">
+                        <p>Access to content within a new experience workspace is managed through four primary roles:</p>
+                        <ul>
+                            <li><strong>Admin:</strong> Full control. Can add/remove users (including other admins), publish, unpublish, update app, delete workspace, manage all content.</li>
+                            <li><strong>Member:</strong> Can publish content, share items (if allowed by admin settings), manage gateway connections, schedule refresh, create/update app (if allowed). Can add users with Member, Contributor, or Viewer roles (but not Admins).</li>
+                            <li><strong>Contributor:</strong> Can create, edit, and delete content within the workspace (datasets, reports, dashboards). Can publish reports. Cannot publish or update an app, or share content broadly (unless they own it and sharing is permitted).</li>
+                            <li><strong>Viewer:</strong> Can view and interact with reports and dashboards. Cannot modify content. Can read data stored in workspace dataflows. Requires a Pro license or content to be in Premium capacity.</li>
+                        </ul>
+                        <p>Users or security groups (Microsoft 365 groups, distribution lists, mail-enabled security groups) can be assigned these roles.</p>
+                        <p>It's best practice to assign roles based on the principle of least privilege.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="exam-tip">
+                <p><strong>Exam Tip:</strong> Understand the differences and capabilities of the four main workspace roles (Admin, Member, Contributor, Viewer). Know that "My Workspace" has limitations for sharing and app creation. Focus on the "new workspace experience."</p>
+            </div>
+        </section>
+
+        <section id="dataset-mgmt" class="content-section mb-16">
+            <h2 class="section-title">Dataset Management in the Service</h2>
+            <p class="section-intro-text">Once published, datasets in the Power BI service require ongoing management to ensure data accuracy, security, and discoverability.</p>
+            <div class="sub-topic-grid grid-cols-1 md:grid-cols-2">
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title">Publishing Datasets & Reports</h4>
+                    <div class="details-content text-sm">
+                        <p>The primary way to get your data model and reports into the Power BI service is by publishing from Power BI Desktop.</p>
+                        <ul>
+                            <li><strong>Process:</strong> In Power BI Desktop, click "Publish" on the Home ribbon. Select a destination workspace.</li>
+                            <li><strong>What's Published:</strong> The entire <code class="code-snippet">.pbix</code> file's content is uploaded. In the service, this typically results in:
+                                <ul>
+                                    <li>A <strong>Dataset:</strong> Contains the data model (tables, relationships, measures, calculated columns), connection information, and refresh settings.</li>
+                                    <li>A <strong>Report:</strong> Contains the visuals and pages you designed.</li>
+                                </ul>
+                            </li>
+                            <li>The dataset and report become separate, manageable items in the service. Multiple reports can be built from a single published dataset.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title">Scheduled Refresh & Gateways</h4>
+                    <div class="details-content text-sm">
+                        <p>Keeps your dataset data current in the Power BI service.</p>
+                        <p><strong>Configuring Scheduled Refresh:</strong></p>
+                        <ul>
+                            <li>Done in the dataset settings in the Power BI service.</li>
+                            <li>Set refresh frequency (e.g., daily, weekly) and specific times (up to 8 timeslots per day for Pro, 48 for Premium).</li>
+                            <li>Specify time zone.</li>
+                            <li>Configure refresh failure notifications to dataset owners.</li>
+                        </ul>
+                        <p class="mt-2"><strong>On-premises Data Gateway:</strong></p>
+                        <ul>
+                            <li><strong>Purpose:</strong> Acts as a secure bridge between the Power BI service (cloud) and your on-premises data sources (e.g., SQL Server on a local server, local files).</li>
+                            <li><strong>Types:</strong>
+                                <ul>
+                                    <li><strong>Standard mode (recommended):</strong> For enterprise use, can be shared by multiple users, supports DirectQuery and scheduled refresh for various services. Installed on a persistent server.</li>
+                                    <li><em>Personal mode:</em> For individual use, runs as an application, only supports import, cannot be shared. (Less focus for exam).</li>
+                                </ul>
+                            </li>
+                            <li><strong>Configuration:</strong> Install gateway software, register it, configure data sources within the gateway in the Power BI service, map datasets to use the gateway connection.</li>
+                        </ul>
+                        <p>Cloud-based data sources (e.g., Azure SQL Database, SharePoint Online) generally do not require a gateway and can be refreshed directly by the service if credentials are configured.</p>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title">Dataset Security: Row-Level Security (RLS)</h4>
+                    <div class="details-content text-sm">
+                        <p>RLS restricts data access for given users at the row level. Filters are applied automatically based on the user's identity.</p>
+                        <p><strong>Static RLS:</strong></p>
+                        <ul>
+                            <li>Define roles and DAX filter rules directly in Power BI Desktop (Modeling tab -> Manage roles).</li>
+                            <li>Example rule for a "RegionalSales" role: <code class="code-snippet">[Region] = "North"</code>.</li>
+                            <li>After publishing, in the Power BI service (Dataset settings -> Security), assign users or security groups to these roles.</li>
+                        </ul>
+                        <p class="mt-2"><strong>Dynamic RLS:</strong></p>
+                        <ul>
+                            <li>DAX filter rules use functions like <code class="code-snippet">USERNAME()</code> or <code class="code-snippet">USERPRINCIPALNAME()</code> to filter data based on the logged-in user.</li>
+                            <li>Typically involves a separate mapping/security table that links user principal names to the data attributes they are allowed to see (e.g., a table linking UserEmail to SalesRegion).</li>
+                            <li>Example rule: <code class="code-snippet">[UserRegion] = LOOKUPVALUE(UserSecurity[Region], UserSecurity[UserEmail], USERPRINCIPALNAME())</code>.</li>
+                        </ul>
+                        <p><strong>Testing RLS:</strong> Use the "View as roles" feature in Power BI Desktop (Modeling tab) or in the Power BI service (Dataset security) to test how data appears for different roles/users.</p>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title">Endorsing Datasets (Promoted, Certified)</h4>
+                    <div class="details-content text-sm">
+                        <p>Endorsement helps users find high-quality, trustworthy datasets and encourages their reuse across the organization.</p>
+                        <ul>
+                            <li><strong>Promoted:</strong> Dataset owners or workspace members with write permissions can promote datasets they deem valuable and ready for wider use. It's a self-service endorsement.</li>
+                            <li><strong>Certified:</strong> A higher level of endorsement indicating the dataset meets an organization's quality and governance standards. Certification is a more controlled process; typically, only authorized administrators or a central governance team can certify datasets. (Power BI admin must enable dataset certification and define a process).</li>
+                        </ul>
+                        <p>Endorsed datasets are highlighted in the Power BI service (e.g., in the "Get Data" experience when connecting to Power BI datasets), making them easier to discover.</p>
+                        <p>This helps build a "single source of truth" and reduces data duplication.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="exam-tip">
+                <p><strong>Exam Tip:</strong> Know the steps to publish and configure scheduled refresh. Understand the critical role of the on-premises data gateway (standard mode). Differentiate static vs. dynamic RLS and how they are implemented. Recognize the purpose of "Promoted" and "Certified" endorsements.</p>
+            </div>
+        </section>
+
+        <section id="sharing-distributing" class="content-section mb-16">
+            <h2 class="section-title">Sharing and Distributing Content</h2>
+            <p class="section-intro-text">Power BI provides multiple ways to share your insights, from direct sharing of reports and dashboards to packaging content into formal Apps.</p>
+            <div class="sub-topic-grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title">Sharing Reports & Dashboards</h4>
+                    <div class="details-content text-sm">
+                        <p>Allows ad-hoc sharing of individual items with specific users or groups.</p>
+                        <ul>
+                            <li><strong>How:</strong> Use the "Share" button on a report or dashboard in the Power BI service.</li>
+                            <li><strong>Permissions for Recipients:</strong>
+                                <ul>
+                                    <li>Allow recipients to re-share the item (if they have Pro license).</li>
+                                    <li>Allow recipients to build content with the underlying dataset(s) (Build permission).</li>
+                                    <li>Send an email notification.</li>
+                                </ul>
+                            </li>
+                            <li><strong>Links:</strong> Can also share via a link. Be mindful of link settings (e.g., "People in your organization," "Specific people").</li>
+                            <li><strong>Licensing:</strong> Generally, both the sharer and the recipient need a Power BI Pro license. If the content is hosted in a Premium capacity, recipients with Free licenses can view it (if granted access).</li>
+                        </ul>
+                        <p>Manage access via the "Manage permissions" pane for the item.</p>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title">Creating & Managing Apps</h4>
+                    <div class="details-content text-sm">
+                        <p>Power BI Apps provide a more formal and structured way to distribute a collection of related content (dashboards, reports, datasets, workbooks) to a broad audience.</p>
+                        <ul>
+                            <li><strong>Creation:</strong> Created from a workspace by users with Admin, Member, or Contributor (if allowed) roles. Click "Create app" or "Update app" in the workspace.</li>
+                            <li><strong>Configuration:</strong>
+                                <ul>
+                                    <li><strong>Setup:</strong> App name, description, logo, theme color.</li>
+                                    <li><strong>Navigation:</strong> Define the app's navigation structure (sections, links to specific content items). Choose which reports/dashboards to include.</li>
+                                    <li><strong>Permissions (Audiences):</strong> In new experience workspaces, you can define multiple audiences for an app. Each audience can see a different subset of the app's content and have different permissions. This allows tailored content delivery from a single app.</li>
+                                </ul>
+                            </li>
+                            <li><strong>Publishing/Updating:</strong> After configuration, publish the app. Updates to workspace content are not automatically reflected in the app; you must "Update app."</li>
+                            <li><strong>Consumption:</strong> Users can find and install apps from "Apps" in the navigation pane or via a direct link.</li>
+                        </ul>
+                        <p>Apps are generally the preferred method for broad content distribution within an organization.</p>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title">Exporting Data from Visuals & Reports</h4>
+                    <div class="details-content text-sm">
+                        <p>Power BI allows users to export data, subject to permissions and settings.</p>
+                        <ul>
+                            <li><strong>From Visuals:</strong>
+                                <ul>
+                                    <li>Click the "..." (More options) on a visual.</li>
+                                    <li><strong>Export data:</strong>
+                                        <ul>
+                                            <li><strong>Summarized data:</strong> Exports the aggregated data shown in the visual.</li>
+                                            <li><strong>Underlying data:</strong> Exports the detailed data rows that make up the visual (if allowed by report settings and dataset permissions).</li>
+                                        </ul>
+                                    </li>
+                                    <li>Formats: Typically <code class="code-snippet">.xlsx</code> (Excel) or <code class="code-snippet">.csv</code>.</li>
+                                </ul>
+                            </li>
+                            <li><strong>Analyze in Excel:</strong> Users can connect to a Power BI dataset from Excel (using the Power BI publisher for Excel or Get Data from Power BI dataset) to create PivotTables or other analyses directly in Excel, leveraging the live Power BI dataset. Requires Build permission on the dataset.</li>
+                            <li><strong>Export Report:</strong>
+                                <ul>
+                                    <li>To PDF (static snapshot).</li>
+                                    <li>To PowerPoint (static images of pages, or live pages if embedding is enabled).</li>
+                                </ul>
+                            </li>
+                        </ul>
+                        <p><strong>Control:</strong> Power BI admins can control data export settings at the tenant level. Report creators can also influence some export options (e.g., for specific visuals).</p>
+                    </div>
+                </div>
+            </div>
+            <div class="exam-tip">
+                <p><strong>Exam Tip:</strong> Differentiate between sharing individual items and distributing content via Apps. Understand App audiences. Know the options for exporting data (summarized vs. underlying) and the "Analyze in Excel" feature. Licensing implications for sharing (Pro vs. Premium) are also important.</p>
+            </div>
+        </section>
+
+        <footer class="text-center mt-12 py-8 border-t border-slate-200">
+            <p class="text-slate-600">&copy; <span id="currentYear"></span> Revature - PL-300 Certification Preparation. All rights reserved.</p>
+        </footer>
+
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+            // Smooth scrolling for nav links
+            document.querySelectorAll('nav a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({ behavior: 'smooth' });
+                    }
+                });
+            });
+
+            // Setup for expandable cards
+            function setupExpandableCards() {
+                const sections = document.querySelectorAll('.content-section');
+                sections.forEach(section => {
+                    const cards = section.querySelectorAll('.sub-topic-card');
+                    cards.forEach(card => {
+                        const titleElement = card.querySelector('.sub-topic-card-title');
+                        const details = card.querySelector('.details-content');
+
+                        if (titleElement && details) {
+                            details.style.display = 'none'; 
+                            titleElement.addEventListener('click', () => {
+                                const isHidden = details.style.display === 'none';
+                                cards.forEach(otherCard => {
+                                    if (otherCard !== card) {
+                                        const otherDetails = otherCard.querySelector('.details-content');
+                                        if (otherDetails) otherDetails.style.display = 'none';
+                                        otherCard.classList.remove('active-item');
+                                    }
+                                });
+                                details.style.display = isHidden ? 'block' : 'none';
+                                if (isHidden) {
+                                    card.classList.add('active-item');
+                                } else {
+                                    card.classList.remove('active-item');
+                                }
+                            });
+                        }
+                    });
+                });
+            }
+            setupExpandableCards();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-900 Cert Prep: Class 6 - Generative AI & Exam Prep</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 
+        Session 6: Generative AI on Azure & Exam Preparation
+        Objective: Understand Generative AI concepts and services on Azure, and finalize exam preparation.
+        - Intro to Generative AI: Models (LLMs), prompts, completions, common scenarios.
+        - Azure OpenAI Service: What it is, key models (GPT, DALL-E, Embeddings), Azure context (security, availability, Responsible AI).
+        - Responsible AI for Generative AI: Specific considerations, Microsoft's approach.
+        - Final Review & Exam Strategies: Recap, exam format, time management, resources, Q&A.
+        - Teaching Tips: Connect existing GenAI knowledge to Azure, emphasize Azure's value, sample questions.
+    -->
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #f1f5f9; /* slate-100 */
+        }
+        .container {
+            max-width: 1200px;
+        }
+        .section-title { 
+            font-size: 2rem; 
+            font-weight: 700; 
+            margin-bottom: 1rem; 
+            color: #0284c7; /* sky-600 */
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #0ea5e9; /* sky-500 */
+            display: inline-block;
+        }
+        .section-intro-text { 
+            margin-bottom: 2rem; 
+            color: #475569; /* slate-600 */
+            font-size: 1.125rem; /* text-lg */
+            line-height: 1.75;
+        }
+        
+        .sub-topic-grid { 
+            display: grid; 
+            gap: 1.5rem; /* gap-6 */
+        }
+        
+        .sub-topic-card { 
+            background-color: white; 
+            border-radius: 0.75rem; /* rounded-xl */
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.05);
+            padding: 1.5rem; /* p-6 */
+            border: 1px solid #e2e8f0; /* slate-200 */
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            display: flex; 
+            flex-direction: column; 
+        }
+        .sub-topic-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.07), 0 4px 6px -4px rgba(0,0,0,0.07);
+        }
+        .sub-topic-card-title { 
+            font-size: 1.25rem; /* text-xl */
+            font-weight: 600; 
+            color: #075985; /* sky-800 */
+            margin-bottom: 0.5rem; /* mb-2 */
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .sub-topic-card-title .emoji-icon { 
+            margin-right: 0.5rem;
+            font-size: 1.3em; 
+        }
+        .sub-topic-card-title::after {
+            content: '▼'; 
+            font-size: 0.8em;
+            color: #94a3b8; /* slate-400 */
+            transition: transform 0.3s ease;
+        }
+        .sub-topic-card.active-item .sub-topic-card-title::after {
+            transform: rotate(180deg); 
+        }
+         .sub-topic-card.active-item {
+            border-left: 5px solid #0ea5e9; /* sky-500 */
+            background-color: #f7fafc; 
+        }
+        .details-content { 
+            display: none; 
+            margin-top: 1rem; /* mt-4 */
+            padding: 1.25rem; /* p-5 */
+            background-color: #f8fafc; /* slate-50 */
+            border-radius: 0.5rem; /* rounded-lg */
+            border: 1px solid #e2e8f0; /* slate-200 */
+            color: #334155; /* slate-700 */
+            line-height: 1.6;
+            flex-grow: 1; 
+        }
+        .details-content p, .details-content ul {
+            margin-bottom: 0.75rem; /* mb-3 */
+        }
+        .details-content ul {
+            list-style-position: inside;
+            padding-left: 0.5rem; /* pl-2 */
+        }
+        .details-content strong {
+            color: #0369a1; /* sky-700 */
+        }
+        .details-content .code-example, .details-content .json-example, .details-content .prompt-example { 
+            background-color: #e0f2fe; 
+            padding: 0.75rem;
+            border-radius: 0.375rem; 
+            margin-top: 0.5rem;
+            border-left: 3px solid #0ea5e9; 
+            font-family: 'Courier New', Courier, monospace;
+            white-space: pre-wrap; 
+            font-size: 0.875rem; /* text-sm */
+        }
+         .json-example strong, .prompt-example strong {
+            color: #075985; /* sky-800, slightly darker for keys */
+        }
+
+        .exam-tip { 
+            background-color: #e0f2fe; 
+            border-left: 5px solid #0ea5e9; 
+            padding: 1.25rem; 
+            margin-top: 1.5rem; 
+            border-radius: 0.5rem; 
+            color: #0c4a6e; 
+        }
+        .exam-tip p:last-child { margin-bottom: 0; }
+        .exam-tip strong { color: #0369a1; }
+
+        .nav-link { transition: color 0.3s, border-bottom-color 0.3s; padding-bottom: 0.25rem; }
+        .nav-link:hover { color: #0ea5e9; border-bottom: 2px solid #0ea5e9; }
+        .content-section { padding-top: 5rem; margin-top: -4.5rem; } 
+        
+        .header-main {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%); /* Emerald/Green gradient */
+            padding: 2rem 0; 
+            margin-top: 4rem; /* Account for fixed navbar height */
+            margin-bottom: 3rem; 
+            border-bottom-left-radius: 1rem;
+            border-bottom-right-radius: 1rem;
+        }
+        .header-main h1 { 
+            color: white;
+            font-size: 2.25rem; 
+            line-height: 1.2; 
+        }
+         .header-main p {
+            color: #d1fae5; /* emerald-100 */
+            font-size: 1.125rem; 
+        }
+        .intro-card {
+            border-left: 5px solid #10b981; /* emerald-500 */
+            padding-top: 1.5rem;
+            padding-right: 1.5rem;
+            padding-bottom: 1.5rem;
+            padding-left: 2rem; 
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800">
+
+    <nav class="bg-white shadow-lg fixed w-full z-20 top-0">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" class="text-2xl font-bold text-emerald-700">AI-900 Prep: Class 6</a>
+            <div class="space-x-1 sm:space-x-2 md:space-x-3 text-xs sm:text-sm md:text-base">
+                <a href="#gen-ai-intro" class="nav-link text-slate-700">GenAI Intro</a>
+                <a href="#azure-openai" class="nav-link text-slate-700">Azure OpenAI</a>
+                <a href="#responsible-gen-ai" class="nav-link text-slate-700">Responsible GenAI</a>
+                <a href="#exam-prep" class="nav-link text-slate-700">Exam Prep</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="header-main">
+        <div class="container mx-auto px-6 text-center">
+            <h1 class="font-bold text-3xl md:text-4xl leading-tight">Generative AI on Azure & Exam Preparation 💡🎓</h1>
+            <p class="mt-2">Interactive Guide for AI-900 Certification - Session 6</p>
+        </div>
+    </div>
+
+    <div class="container mx-auto px-6 py-8">
+
+        <section id="introduction-ai900-class6" class="mb-12 card intro-card">
+             <h2 class="section-title" style="font-size: 1.75rem; margin-bottom: 1rem; border-bottom: none; display: block; color: #047857;">Welcome to Session 6!</h2>
+             <p class="mb-4 text-slate-700 leading-relaxed">In our final session, we'll dive into the rapidly evolving world of Generative AI on Azure. Leveraging your existing knowledge, we'll explore how Azure provides access to powerful generative models and the unique considerations for their responsible use. Then, we'll shift gears to focus on final exam preparation strategies to help you succeed in the AI-900 certification!</p>
+             <p class="font-semibold text-slate-700">Objective: Understand Generative AI concepts and services on Azure, and finalize exam preparation.</p>
+             <p class="font-semibold text-slate-700 mt-2">Today's Focus (Approx. 15-20% of exam):</p>
+             <ul class="list-disc list-inside ml-4 space-y-1 text-slate-600">
+                <li>Introduction to Generative AI Workloads.</li>
+                <li>Azure OpenAI Service: Key models and Azure-specific advantages.</li>
+                <li>Responsible AI considerations for Generative AI.</li>
+                <li>Final Review: Key skill areas, exam format, study resources, and Q&A.</li>
+             </ul>
+             <p class="mt-4 font-semibold text-emerald-600">Let's explore the creative power of AI on Azure and get you ready for the exam!</p>
+        </section>
+
+        <section id="gen-ai-intro" class="content-section mb-16">
+            <h2 class="section-title" style="color: #047857; border-color: #059669;">Introduction to Generative AI Workloads</h2>
+            <p class="section-intro-text">Generative AI refers to AI models that can create new, original content, rather than just analyzing or acting on existing data. Your existing knowledge of GenAI concepts will be helpful here as we frame them within common workload scenarios.</p>
+            <div class="sub-topic-grid grid-cols-1 md:grid-cols-2">
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title"><span class="emoji-icon">✨</span>What is Generative AI? Core Concepts Recap</h4>
+                    <div class="details-content text-sm">
+                        <p><strong>Generative AI:</strong> A class of AI models that learn patterns and structures from training data and then use this knowledge to generate new, synthetic data that resembles the original data but is unique.</p>
+                        <p><strong>Key Concepts (Quick Review):</strong></p>
+                        <ul>
+                            <li><strong>Models (Large Language Models - LLMs):</strong> Sophisticated neural networks trained on vast amounts of text (and sometimes code or images) capable of understanding and generating human-like language. Examples: GPT series (Generative Pre-trained Transformer).</li>
+                            <li><strong>Prompts:</strong> The input text or instruction given to a generative AI model to guide its output. Effective prompt engineering is key to getting desired results.</li>
+                            <li><strong>Completions (Responses/Outputs):</strong> The text, image, code, or other content generated by the model in response to a prompt.</li>
+                        </ul>
+                        <div class="prompt-example">
+                            <p><strong>Example Prompt:</strong> "Write a short poem about a rainy day."</p>
+                            <p><strong>Conceptual Completion:</strong> A few lines of poetry describing rain.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title"><span class="emoji-icon">📝</span>Common Generative AI Scenarios</h4>
+                    <div class="details-content text-sm">
+                        <p>Generative AI is used in a wide array of applications:</p>
+                        <ul>
+                            <li><strong>Content Generation:</strong> Creating articles, blog posts, marketing copy, product descriptions, scripts, or even fictional stories.</li>
+                            <li><strong>Summarization:</strong> Generating concise summaries of long documents, articles, or conversations (often abstractive summarization).</li>
+                            <li><strong>Code Generation:</strong> Assisting developers by generating code snippets, entire functions, or even explaining existing code.</li>
+                            <li><strong>Image Generation:</strong> Creating novel images from textual descriptions (e.g., using models like DALL-E).</li>
+                            <li><strong>Chat & Conversational AI:</strong> Powering more natural, context-aware, and engaging chatbots and virtual assistants.</li>
+                            <li><strong>Translation:</strong> Providing more fluent and contextually appropriate translations.</li>
+                            <li><strong>Data Augmentation:</strong> Creating synthetic data to expand training datasets for other ML models.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="exam-tip">
+                <p><strong>Exam Tip:</strong> Understand the basic definition of Generative AI, LLMs, prompts, and completions. Be able to identify common scenarios where Generative AI is applied.</p>
+            </div>
+        </section>
+
+        <section id="azure-openai" class="content-section mb-16">
+            <h2 class="section-title" style="color: #047857; border-color: #059669;">Azure OpenAI Service</h2>
+            <p class="section-intro-text">Azure OpenAI Service provides access to OpenAI's powerful large language models with the added security, compliance, and enterprise features of Microsoft Azure.</p>
+            <div class="sub-topic-grid grid-cols-1 md:grid-cols-2">
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title"><span class="emoji-icon">☁️</span>What is Azure OpenAI Service?</h4>
+                    <div class="details-content text-sm">
+                        <p><strong>Concept:</strong> A managed Azure service that gives developers and organizations access to a variety of OpenAI's advanced AI models.</p>
+                        <p><strong>Key Value Proposition:</strong> It combines OpenAI's cutting-edge models with Azure's enterprise-grade capabilities.</p>
+                        <p><strong>How it works (Conceptual):</strong> You provision an Azure OpenAI resource in your Azure subscription. Then, you can deploy specific models (like GPT-3.5-turbo, GPT-4, DALL-E) within that resource. These deployed models are accessible via a REST API endpoint.</p>
+                        <div class="json-example">
+                           <p><strong>Teaching Tip:</strong> Explain that while the underlying models are from OpenAI, using them via Azure OpenAI means your data isn't sent back to OpenAI's public service by default, and you get Azure's infrastructure benefits.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title"><span class="emoji-icon">🧠</span>Key Models & Capabilities</h4>
+                    <div class="details-content text-sm">
+                        <p>Azure OpenAI Service provides access to several families of models:</p>
+                        <ul>
+                            <li><strong>GPT-4 & GPT-3.5-turbo Series:</strong>
+                                <ul>
+                                    <li>Highly capable language models optimized for chat and a wide range of natural language understanding and generation tasks (content creation, summarization, code generation, complex reasoning).</li>
+                                    <li><strong>Use Cases:</strong> Advanced chatbots, drafting emails, writing code, summarizing reports, answering complex questions.</li>
+                                </ul>
+                            </li>
+                            <li><strong>DALL-E Series:</strong>
+                                <ul>
+                                    <li>Models that can generate unique images and art from textual descriptions (prompts).</li>
+                                    <li><strong>Use Cases:</strong> Creating custom illustrations, concept art, product mockups from text.</li>
+                                </ul>
+                            </li>
+                            <li><strong>Embeddings Models (e.g., text-embedding-ada-002):</strong>
+                                <ul>
+                                    <li>Convert text into numerical vector representations (embeddings). These vectors capture the semantic meaning of the text.</li>
+                                    <li><strong>Use Cases:</strong> Semantic search (finding documents similar in meaning, not just keywords), text similarity, clustering, recommendations.</li>
+                                </ul>
+                            </li>
+                             <li><strong>Whisper Model (via Azure AI Speech with Azure OpenAI):</strong>
+                                <ul>
+                                    <li>An advanced speech-to-text model for highly accurate audio transcription. While accessed via Azure AI Speech, it's often discussed in the context of powerful OpenAI models.</li>
+                                </ul>
+                            </li>
+                        </ul>
+                        <p><em>Specific model availability can change, so always refer to official Azure documentation for the latest.</em></p>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title"><span class="emoji-icon">🛡️</span>The Azure Context: Key Advantages</h4>
+                    <div class="details-content text-sm">
+                        <p>Using OpenAI models through Azure provides distinct advantages for enterprises:</p>
+                        <ul>
+                            <li><strong>Private Networking:</strong> Deploy models within your Azure Virtual Network for enhanced security and isolation. Data sent to your Azure OpenAI endpoint is processed within your Azure environment.</li>
+                            <li><strong>Regional Availability:</strong> Deploy models in various Azure regions to meet data residency requirements and ensure low latency.</li>
+                            <li><strong>Responsible AI Content Filtering:</strong> Azure OpenAI includes built-in content filtering systems to help detect and mitigate harmful content (hate speech, self-harm, violence, sexual content) in prompts and completions. This is a key part of Microsoft's commitment to Responsible AI.</li>
+                            <li><strong>Integration with Azure Services:</strong> Seamlessly integrate with other Azure services like Azure Machine Learning, Azure Active Directory (for authentication), Azure Monitor (for logging and monitoring usage).</li>
+                            <li><strong>Compliance & Enterprise-Grade Security:</strong> Leverages Azure's robust security infrastructure and compliance certifications.</li>
+                        </ul>
+                        <p><strong>Teaching Tip:</strong> Emphasize that these Azure-specific features are crucial for businesses looking to use powerful LLMs in a secure, compliant, and responsible manner.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="exam-tip">
+                <p><strong>Exam Tip:</strong> Understand what Azure OpenAI Service is and its relationship with OpenAI. Know the main types of models available (GPT, DALL-E, Embeddings) and their primary use cases. Be aware of the key benefits of using these models within the Azure ecosystem, especially security and responsible AI features.</p>
+            </div>
+        </section>
+
+        <section id="responsible-gen-ai" class="content-section mb-16">
+            <h2 class="section-title" style="color: #047857; border-color: #059669;">Responsible AI for Generative AI</h2>
+            <p class="section-intro-text">Generative AI introduces unique challenges and considerations for Responsible AI. It's crucial to develop and deploy these powerful models ethically and safely.</p>
+            <div class="sub-topic-grid grid-cols-1 md:grid-cols-2">
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title"><span class="emoji-icon">⚖️</span>Specific Considerations for GenAI</h4>
+                    <div class="details-content text-sm">
+                        <p>While the core principles of Responsible AI (Fairness, Reliability & Safety, Privacy & Security, Inclusiveness, Transparency, Accountability) still apply, Generative AI amplifies certain risks:</p>
+                        <ul>
+                            <li><strong>Accuracy & Fabricated Information (Hallucinations):</strong> LLMs can sometimes generate plausible-sounding but incorrect or nonsensical information. Verifying outputs is critical.</li>
+                            <li><strong>Bias Amplification:</strong> Models trained on large internet datasets can reflect and even amplify existing societal biases related to gender, race, etc., in their generated content.</li>
+                            <li><strong>Harmful Content Generation:</strong> Models could potentially be prompted to generate inappropriate, hateful, or misleading content if not properly safeguarded.</li>
+                            <li><strong>Misinformation & Disinformation:</strong> The ease of generating realistic text or images can be exploited for creating and spreading false information.</li>
+                            <li><strong>Intellectual Property:</strong> Questions around copyright and ownership of AI-generated content and the data used for training.</li>
+                            <li><strong>Lack of Explainability:</strong> Understanding exactly *why* an LLM generated a specific output can be challenging.</li>
+                            <li><strong>Over-Reliance:</strong> Users might become overly dependent on AI-generated content without critical evaluation.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title"><span class="emoji-icon">🛡️</span>Microsoft's Approach to Responsible GenAI</h4>
+                    <div class="details-content text-sm">
+                        <p>Microsoft is committed to developing and deploying Generative AI responsibly, incorporating its existing Responsible AI Standard and adding specific measures for GenAI:</p>
+                        <ul>
+                            <li><strong>Safety Systems & Content Filtering:</strong> Azure OpenAI Service includes integrated safety systems that filter prompts and completions to detect and mitigate harmful content. These systems are configurable to some extent.</li>
+                            <li><strong>Transparency:</strong> Encouraging clear disclosure when users are interacting with AI-generated content. Providing tools and guidance for understanding model capabilities and limitations.</li>
+                            <li><strong>Human Oversight:</strong> Emphasizing the need for human review and intervention, especially in sensitive applications. Generative AI should augment human capabilities, not replace human judgment entirely.</li>
+                            <li><strong>Data Governance & Privacy:</strong> Ensuring data used with Azure OpenAI Service is handled securely and in accordance with privacy commitments. Customer data is not used to retrain the base OpenAI models.</li>
+                            <li><strong>Mitigating Bias:</strong> Ongoing research and efforts to identify and reduce bias in models and provide guidance to developers.</li>
+                            <li><strong>Limited Access & Use Cases:</strong> For some advanced models or capabilities, Microsoft may have a limited access policy, requiring customers to apply and describe their use cases to ensure responsible deployment.</li>
+                            <li><strong>Tools & Guidance:</strong> Providing resources, documentation, and best practices for building responsible GenAI applications.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="exam-tip">
+                <p><strong>Exam Tip:</strong> Understand the unique responsible AI challenges posed by Generative AI (e.g., hallucinations, bias, harmful content). Be aware of Microsoft's approach, particularly the role of content filtering in Azure OpenAI Service and the importance of human oversight.</p>
+            </div>
+        </section>
+
+        <section id="exam-prep" class="content-section mb-16">
+            <h2 class="section-title" style="color: #047857; border-color: #059669;">Final Review & Exam Strategies</h2>
+            <p class="section-intro-text">Let's consolidate our learning and discuss strategies for tackling the AI-900 exam.</p>
+            <div class="sub-topic-grid grid-cols-1 md:grid-cols-2">
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title"><span class="emoji-icon">🔄</span>Quick Recap: Five Main Skill Areas</h4>
+                    <div class="details-content text-sm">
+                        <p>The AI-900 exam typically covers these core areas (refer to the official Microsoft exam skills outline for the most current weightings):</p>
+                        <ol>
+                            <li><strong>Describe AI workloads and considerations (Session 1):</strong> Core AI concepts, common AI workloads, Responsible AI principles.</li>
+                            <li><strong>Describe fundamental principles of machine learning on Azure (Sessions 2 & 3):</strong> Core ML concepts (regression, classification, clustering), features/labels, training/validation, Azure ML service, workspaces, compute, data assets, AutoML, Designer, model management.</li>
+                            <li><strong>Describe features of computer vision workloads on Azure (Session 4):</strong> CV concepts, Azure AI Vision (image analysis, OCR), Azure AI Face, Custom Vision, Document Intelligence.</li>
+                            <li><strong>Describe features of Natural Language Processing (NLP) workloads on Azure (Session 5):</strong> NLP concepts, Azure AI Language (key phrase, NER, sentiment, etc.), Azure AI Speech (STT, TTS), Azure AI Translator, Conversational AI concepts, Azure Bot Service.</li>
+                            <li><strong>Describe features of Generative AI workloads on Azure (This Session):</strong> GenAI concepts, Azure OpenAI Service, responsible GenAI.</li>
+                        </ol>
+                        <p>Ensure you have a good conceptual understanding of the services and their primary use cases within each area.</p>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title"><span class="emoji-icon">📝</span>Exam Format & Question Types</h4>
+                    <div class="details-content text-sm">
+                        <p>The AI-900 exam format can include various question types:</p>
+                        <ul>
+                            <li><strong>Multiple-Choice:</strong> Select one correct answer from several options.</li>
+                            <li><strong>Multiple-Response:</strong> Select multiple correct answers from several options.</li>
+                            <li><strong>Drag-and-Drop:</strong> Match terms to descriptions or place items in the correct order.</li>
+                            <li><strong>Case Studies:</strong> A scenario is presented, followed by several questions related to that scenario.</li>
+                            <li><strong>Hot Area:</strong> Identify specific areas on an image or diagram.</li>
+                            <li><strong>Best Answer:</strong> Choose the best solution from a set of plausible options.</li>
+                        </ul>
+                        <p>The exam is generally focused on conceptual understanding rather than deep technical implementation details or coding.</p>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title"><span class="emoji-icon">⏱️</span>Time Management Tips</h4>
+                    <div class="details-content text-sm">
+                        <ul>
+                            <li><strong>Check the Number of Questions and Time Allotted:</strong> Calculate roughly how much time you can spend per question.</li>
+                            <li><strong>Don't Get Stuck:</strong> If you're unsure about a question, mark it for review and move on. You can come back to it later if time permits.</li>
+                            <li><strong>Read Questions Carefully:</strong> Pay attention to keywords like "NOT," "BEST," "MOST LIKELY."</li>
+                            <li><strong>Eliminate Incorrect Answers:</strong> For multiple-choice questions, try to eliminate obviously wrong options first.</li>
+                            <li><strong>Manage Case Studies:</strong> Read the scenario thoroughly first, then address the questions. The scenario usually remains available as you answer.</li>
+                            <li><strong>Pace Yourself:</strong> Keep an eye on the clock.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title"><span class="emoji-icon">📚</span>Key Resources for Final Study</h4>
+                    <div class="details-content text-sm">
+                        <ul>
+                            <li><strong>Microsoft Learn AI-900 Learning Path:</strong> This is the primary and most official resource. Work through all the modules: <a href="https://learn.microsoft.com/en-us/training/paths/get-started-with-artificial-intelligence-on-azure/" target="_blank" class="text-sky-600 hover:underline">AI-900 Microsoft Learn Path</a></li>
+                            <li><strong>Official Exam Skills Outline:</strong> Download this from the AI-900 exam page on Microsoft Learn. It details exactly what is covered.</li>
+                            <li><strong>Microsoft Official Practice Tests:</strong> Check if Microsoft offers an official practice test for AI-900 (sometimes available through MeasureUp or other partners). These are very valuable.</li>
+                            <li><strong>These Session Guides:</strong> Review the key concepts and exam tips we've covered in these six sessions.</li>
+                            <li><strong>Azure Documentation:</strong> For any service you're unsure about, a quick read of the "What is..." or "Overview" page in the official Azure docs can be helpful.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title"><span class="emoji-icon">🙋</span>Q&A and Final Thoughts</h4>
+                    <div class="details-content text-sm">
+                        <p>This is the time for any final questions you might have about the AI-900 content or the exam itself.</p>
+                        <p><strong>Key Takeaways for Success:</strong></p>
+                        <ul>
+                            <li>Focus on <strong>what</strong> each Azure AI service does and <strong>why</strong> you would use it (its primary use cases).</li>
+                            <li>Understand the core concepts of AI, ML, CV, NLP, and Generative AI.</li>
+                            <li>Be very familiar with the <strong>Responsible AI principles</strong> and how they apply to different AI workloads.</li>
+                            <li>You don't need to be an expert coder or know how to configure every service in the Azure portal, but you need to understand their capabilities.</li>
+                        </ul>
+                        <p>Good luck with your final preparation and the AI-900 exam!</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="text-center mt-12 py-8 border-t border-slate-200">
+            <p class="text-slate-600">&copy; <span id="currentYear"></span> Revature - AI-900 Certification Preparation. All rights reserved.</p>
+            <p class="text-slate-500 mt-1">Good Luck with Your AI-900 Exam!</p>
+        </footer>
+
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+            // Smooth scrolling for nav links
+            document.querySelectorAll('nav a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        // Adjust for fixed navbar height
+                        const navbarHeight = document.querySelector('nav').offsetHeight;
+                        const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset - navbarHeight;
+                        
+                        window.scrollTo({
+                            top: targetPosition,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+
+            // Setup for expandable cards
+            function setupExpandableCards() {
+                const sections = document.querySelectorAll('.content-section');
+                sections.forEach(section => {
+                    const cards = section.querySelectorAll('.sub-topic-card');
+                    cards.forEach(card => {
+                        const titleElement = card.querySelector('.sub-topic-card-title');
+                        const details = card.querySelector('.details-content');
+
+                        if (titleElement && details) {
+                            details.style.display = 'none'; 
+                            titleElement.addEventListener('click', () => {
+                                const isHidden = details.style.display === 'none';
+                                // Close other open cards within the same grid
+                                const parentGrid = card.closest('.sub-topic-grid');
+                                if (parentGrid) {
+                                    parentGrid.querySelectorAll('.sub-topic-card').forEach(otherCard => {
+                                        if (otherCard !== card) {
+                                            const otherDetails = otherCard.querySelector('.details-content');
+                                            if (otherDetails) otherDetails.style.display = 'none';
+                                            otherCard.classList.remove('active-item');
+                                        }
+                                    });
+                                }
+                                
+                                details.style.display = isHidden ? 'block' : 'none';
+                                if (isHidden) {
+                                    card.classList.add('active-item');
+                                } else {
+                                    card.classList.remove('active-item');
+                                }
+                            });
+                        }
+                    });
+                });
+            }
+            setupExpandableCards();
+        });
+    </script>
+</body>
+</html>

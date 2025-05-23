@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PL-300 Cert Prep: Class 4 - Advanced DAX & Report Enhancement</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Visualization & Content Choices: 
+        - Advanced DAX: Goal: Explain complex patterns. Method: Grid of clickable cards for VAR, Parent-Child, RANKX/TOPN. Lib: HTML/CSS/JS. Content expanded.
+        - Report Enhancement: Goal: Detail insight techniques. Method: Grid of clickable cards for Interactive Visuals, Drill-through, Bookmarks, Conditional Formatting. Lib: HTML/CSS/JS. Content expanded.
+        - Accessibility: Goal: Explain design considerations. Method: Clickable card for accessibility/usability. Lib: HTML/CSS/JS. Content expanded.
+        - Footer: Static content.
+        - No charts needed; focus on interactive text. All AI features removed. Layout consistent with enhanced Class 1/3.
+    -->
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #f1f5f9; /* slate-100 */
+        }
+        .container {
+            max-width: 1200px;
+        }
+        .section-title { 
+            font-size: 2rem; 
+            font-weight: 700; 
+            margin-bottom: 1rem; 
+            color: #0284c7; /* sky-600 */
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #0ea5e9; /* sky-500 */
+            display: inline-block;
+        }
+        .section-intro-text { 
+            margin-bottom: 2rem; 
+            color: #475569; /* slate-600 */
+            font-size: 1.125rem; /* text-lg */
+            line-height: 1.75;
+        }
+        
+        .sub-topic-grid { 
+            display: grid; 
+            gap: 1.5rem; /* gap-6 */
+        }
+        
+        .sub-topic-card { 
+            background-color: white; 
+            border-radius: 0.75rem; /* rounded-xl */
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.05);
+            padding: 1.5rem; /* p-6 */
+            border: 1px solid #e2e8f0; /* slate-200 */
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .sub-topic-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.07), 0 4px 6px -4px rgba(0,0,0,0.07);
+        }
+        .sub-topic-card-title { 
+            font-size: 1.25rem; /* text-xl */
+            font-weight: 600; 
+            color: #075985; /* sky-800 */
+            margin-bottom: 0.5rem; /* mb-2 */
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .sub-topic-card-title::after {
+            content: '▼'; 
+            font-size: 0.8em;
+            color: #94a3b8; /* slate-400 */
+            transition: transform 0.3s ease;
+        }
+        .sub-topic-card.active-item .sub-topic-card-title::after {
+            transform: rotate(180deg); 
+        }
+         .sub-topic-card.active-item {
+            border-left: 5px solid #0ea5e9; /* sky-500 */
+            background-color: #f7fafc; 
+        }
+        .details-content { 
+            display: none; 
+            margin-top: 1rem; /* mt-4 */
+            padding: 1.25rem; /* p-5 */
+            background-color: #f8fafc; /* slate-50 */
+            border-radius: 0.5rem; /* rounded-lg */
+            border: 1px solid #e2e8f0; /* slate-200 */
+            color: #334155; /* slate-700 */
+            line-height: 1.6;
+        }
+        .details-content p, .details-content ul {
+            margin-bottom: 0.75rem; /* mb-3 */
+        }
+        .details-content ul {
+            list-style-position: inside;
+            padding-left: 0.5rem; /* pl-2 */
+        }
+        .details-content strong {
+            color: #0369a1; /* sky-700 */
+        }
+        .details-content .code-example {
+            background-color: #e0f2fe; /* sky-100 */
+            padding: 0.75rem;
+            border-radius: 0.375rem; /* rounded-md */
+            margin-top: 0.5rem;
+            border-left: 3px solid #0ea5e9; /* sky-500 */
+            font-family: 'Courier New', Courier, monospace;
+            white-space: pre-wrap; /* Allows line breaks in code */
+        }
+
+        .exam-tip { 
+            background-color: #e0f2fe; 
+            border-left: 5px solid #0ea5e9; 
+            padding: 1.25rem; 
+            margin-top: 1.5rem; 
+            border-radius: 0.5rem; 
+            color: #0c4a6e; 
+        }
+        .exam-tip p:last-child { margin-bottom: 0; }
+        .exam-tip strong { color: #0369a1; }
+
+
+        .nav-link { transition: color 0.3s, border-bottom-color 0.3s; padding-bottom: 0.25rem; }
+        .nav-link:hover { color: #0ea5e9; border-bottom: 2px solid #0ea5e9; }
+        .content-section { padding-top: 5rem; margin-top: -4.5rem; } 
+        .code-snippet { 
+            background-color: #e2e8f0; 
+            color: #1e293b; 
+            padding: 0.25rem 0.5rem; 
+            border-radius: 0.25rem; 
+            font-family: 'Courier New', Courier, monospace; 
+            font-size: 0.9em; 
+            border: 1px solid #cbd5e1; 
+        }
+        .header-main {
+             background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%); 
+             padding: 2rem 0;
+             margin-bottom: 3rem; 
+             border-bottom-left-radius: 1rem;
+             border-bottom-right-radius: 1rem;
+        }
+        .header-main h1 {
+            color: white;
+            font-size: 2.5rem; 
+        }
+         .header-main p {
+            color: #e0f2fe; 
+            font-size: 1.125rem; 
+        }
+        .intro-card {
+            border-left: 5px solid #0ea5e9;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800">
+
+    <nav class="bg-white shadow-lg fixed w-full z-20 top-0">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" class="text-2xl font-bold text-sky-700">PL-300 Prep: Class 4</a>
+            <div class="space-x-1 sm:space-x-2 md:space-x-3 text-xs sm:text-sm md:text-base">
+                <a href="#advanced-dax" class="nav-link text-slate-700">Adv. DAX</a>
+                <a href="#report-enhancement" class="nav-link text-slate-700">Enhance Reports</a>
+                <a href="#accessibility" class="nav-link text-slate-700">Accessibility</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="header-main">
+        <div class="container mx-auto px-6 text-center">
+            <h1 class="font-bold">Advanced DAX & Report Enhancement ✨</h1>
+            <p class="mt-2">Interactive Guide for PL-300 Certification - Session 4</p>
+        </div>
+    </div>
+
+    <div class="container mx-auto px-6 py-8">
+
+        <section id="introduction-pl300-class4" class="mb-12 card intro-card">
+             <h2 class="section-title" style="font-size: 1.75rem; margin-bottom: 1rem; border-bottom: none; display: block;">Welcome to Session 4!</h2>
+             <p class="mb-4 text-slate-700 leading-relaxed">Building on our DAX fundamentals, this session explores more advanced DAX patterns to solve complex analytical problems. We'll also focus on techniques to enrich your Power BI reports, making them more insightful, interactive, and user-friendly.</p>
+             <p class="font-semibold text-slate-700">Today's Focus (30 mins):</p>
+             <ul class="list-disc list-inside ml-4 space-y-1 text-slate-600">
+                <li>Advanced DAX Patterns: Variables, Parent-Child Hierarchies, RANKX, TOPN.</li>
+                <li>Enhancing Reports for Analytical Insights: Interactive Visuals, Drill-through, Bookmarks, Conditional Formatting.</li>
+                <li>Accessibility and Usability Considerations.</li>
+             </ul>
+             <p class="mt-4 font-semibold text-sky-600">Let's elevate your DAX skills and report design!</p>
+        </section>
+
+        <section id="advanced-dax" class="content-section mb-16">
+            <h2 class="section-title">Advanced DAX Patterns</h2>
+            <p class="section-intro-text">Leverage these advanced DAX techniques to tackle more sophisticated analytical requirements and improve the readability and performance of your calculations.</p>
+            <div class="sub-topic-grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title">Variables in DAX (VAR)</h4>
+                    <div class="details-content text-sm">
+                        <p>Variables allow you to store the result of an expression and reuse it multiple times within a single DAX formula (measure or calculated column).</p>
+                        <p><strong>Syntax:</strong></p>
+                        <div class="code-example">
+                            <code class="code-snippet">MeasureName = 
+    VAR VariableName1 = &lt;Expression1&gt;
+    VAR VariableName2 = &lt;Expression2&gt; 
+    RETURN
+        &lt;FinalExpressionUsingVariables&gt;
+                            </code>
+                        </div>
+                        <p><strong>Benefits:</strong></p>
+                        <ul>
+                            <li><strong>Readability:</strong> Breaks down complex formulas into logical, named steps.</li>
+                            <li><strong>Performance:</strong> An expression assigned to a variable is evaluated only once, even if referenced multiple times in the <code class="code-snippet">RETURN</code> statement. This can prevent redundant calculations.</li>
+                            <li><strong>Debugging:</strong> Easier to test intermediate results by temporarily changing the <code class="code-snippet">RETURN</code> statement to output a variable's value.</li>
+                        </ul>
+                        <p>Example: Calculating Profit Margin %</p>
+                        <div class="code-example">
+                            <code class="code-snippet">Profit Margin % = 
+    VAR TotalRevenue = SUM(Sales[Revenue])
+    VAR TotalCost = SUM(Sales[Cost])
+    RETURN
+        IF(
+            TotalRevenue > 0, 
+            DIVIDE(TotalRevenue - TotalCost, TotalRevenue),
+            BLANK()
+        )
+                            </code>
+                        </div>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title">Working with Parent-Child Hierarchies</h4>
+                    <div class="details-content text-sm">
+                        <p>Parent-child hierarchies (e.g., employee-manager, organizational units) are often stored in a table with two columns: one for the item's key (e.g., EmployeeKey) and one for its parent's key (e.g., ManagerKey).</p>
+                        <p>DAX provides specific functions to navigate these structures:</p>
+                        <ul>
+                            <li><code class="code-snippet">PATH(&lt;ID_columnName&gt;, &lt;parent_columnName&gt;)</code>: Returns a delimited text string representing the path from the top-most parent to the current item. Example: "CEO|VP|Manager|Employee".</li>
+                            <li><code class="code-snippet">PATHITEM(&lt;path&gt;, &lt;position&gt; [, &lt;type&gt;])</code>: Extracts an item from a path string at a specified position.</li>
+                            <li><code class="code-snippet">PATHLENGTH(&lt;path&gt;)</code>: Returns the number of levels in a path.</li>
+                            <li><code class="code-snippet">PATHCONTAINS(&lt;path&gt;, &lt;item&gt;)</code>: Returns TRUE if the specified item exists within the path.</li>
+                        </ul>
+                        <p>These are typically used in calculated columns to flatten the hierarchy for easier reporting or to create level-based aggregations.</p>
+                        <div class="code-example">
+                            <code class="code-snippet">Employee[HierarchyPath] = PATH(Employee[EmployeeKey], Employee[ManagerKey])</code><br>
+                            <code class="code-snippet">Employee[Level1Manager] = PATHITEM(Employee[HierarchyPath], 2)</code>
+                        </div>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title">Intro to RANKX & TOPN</h4>
+                    <div class="details-content text-sm">
+                        <p><strong>RANKX(&lt;table&gt;, &lt;expression&gt; [, &lt;value&gt; [, &lt;order&gt; [, &lt;ties&gt;]]]):</strong></p>
+                        <ul>
+                            <li>Returns the ranking of a number in a list of numbers for each row in the table argument.</li>
+                            <li><code class="code-snippet">&lt;table&gt;</code>: The table containing the rows to rank. Often <code class="code-snippet">ALL(&lt;table&gt;)</code> or <code class="code-snippet">ALLSELECTED(&lt;table&gt;)</code> to rank across all items.</li>
+                            <li><code class="code-snippet">&lt;expression&gt;</code>: The expression evaluated for each row to determine the value to rank (e.g., <code class="code-snippet">[Total Sales]</code>).</li>
+                            <li><code class="code-snippet">&lt;value&gt;</code> (Optional): The value whose rank is to be found. If omitted, the expression for the current row context is used.</li>
+                            <li><code class="code-snippet">&lt;order&gt;</code> (Optional): <code class="code-snippet">ASC</code> (ascending) or <code class="code-snippet">DESC</code> (descending, default).</li>
+                            <li><code class="code-snippet">&lt;ties&gt;</code> (Optional): <code class="code-snippet">SKIP</code> (default, e.g., 1, 2, 2, 4) or <code class="code-snippet">DENSE</code> (e.g., 1, 2, 2, 3).</li>
+                        </ul>
+                        <div class="code-example">
+                            <code class="code-snippet">Product Rank by Sales = RANKX(ALL(Product[ProductName]), [Total Sales], , DESC, DENSE)</code>
+                        </div>
+                        <p class="mt-2"><strong>TOPN(&lt;n_value&gt;, &lt;table&gt;, &lt;orderBy_expression&gt; [, &lt;order&gt; [, &lt;orderBy_expression2&gt; ...]]):</strong></p>
+                        <ul>
+                            <li>Returns the top N rows of a table based on an expression.</li>
+                            <li>Useful for filtering visuals or in table expressions within <code class="code-snippet">CALCULATE</code>.</li>
+                        </ul>
+                        <div class="code-example">
+                            <code class="code-snippet">Top 5 Products by Sales = CALCULATE([Total Sales], TOPN(5, ALL(Product[ProductName]), [Total Sales], DESC))</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="exam-tip">
+                <p><strong>Exam Tip:</strong> Variables (<code class="code-snippet">VAR</code>) are crucial for readability and performance in complex DAX. Understand the purpose of parent-child functions like <code class="code-snippet">PATH</code>. Be familiar with the basic syntax and use cases of <code class="code-snippet">RANKX</code> for ranking and <code class="code-snippet">TOPN</code> for filtering top items.</p>
+            </div>
+        </section>
+
+        <section id="report-enhancement" class="content-section mb-16">
+            <h2 class="section-title">Enhancing Reports for Analytical Insights</h2>
+            <p class="section-intro-text">Beyond basic visuals, Power BI offers many features to make reports more interactive, insightful, and tailored to specific user needs.</p>
+            <div class="sub-topic-grid grid-cols-1 md:grid-cols-2">
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title">Creating & Configuring Interactive Visuals</h4>
+                    <div class="details-content text-sm">
+                        <p>Interactivity is key to exploration in Power BI.</p>
+                        <ul>
+                            <li><strong>Cross-filtering & Cross-highlighting:</strong> By default, selecting a data point in one visual filters or highlights related data in other visuals on the same page. Edit interactions (Format tab -> Edit interactions) to control this behavior (Filter, Highlight, None).</li>
+                            <li><strong>Slicers:</strong> Provide users with easy ways to filter the entire report page (or specific visuals if synched). Can be based on list, dropdown, date range, numeric range.</li>
+                            <li><strong>Tooltips:</strong> Customize tooltips to show additional relevant information when a user hovers over a data point. You can add measures or columns to the Tooltips field well or create custom report page tooltips.</li>
+                            <li><strong>Drill Down/Up:</strong> For visuals with hierarchies (e.g., Date, Product Category/Subcategory), users can drill down to see more detail or drill up to see a summary. Enable drill down in the visual header.</li>
+                            <li><strong>Spotlight:</strong> Focus on a single data point in a visual, dimming others.</li>
+                            <li><strong>Visual Headers:</strong> Customize visual headers to show/hide options like filter, drill, focus mode.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title">Drill-through & Cross-Report Drill-through</h4>
+                    <div class="details-content text-sm">
+                        <p><strong>Drill-through (within the same report):</strong></p>
+                        <ul>
+                            <li>Allows users to navigate from a summary visual to a more detailed "drill-through page" that is filtered to the context of the selected data point.</li>
+                            <li><strong>Setup:</strong> Create a detail page. In the Visualizations pane for that page, drag the field(s) you want to drill through on into the "Drillthrough" field well. Power BI automatically adds a "back" button.</li>
+                            <li>Users right-click a data point in a source visual and select "Drill through" to navigate.</li>
+                        </ul>
+                        <p class="mt-2"><strong>Cross-Report Drill-through:</strong></p>
+                        <ul>
+                            <li>Similar to drill-through, but allows navigation between different reports published in the same Power BI workspace.</li>
+                            <li><strong>Setup:</strong> In the target report's drill-through page, enable "Cross-report" in the Drillthrough field well. The source report must use the same data model or have fields with the same names and data types as the drill-through fields in the target.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title">Using Bookmarks for Storytelling & Navigation</h4>
+                    <div class="details-content text-sm">
+                        <p>Bookmarks capture the current state of a report page, including filters, slicers, sort order, visual visibility, and focus mode.</p>
+                        <p><strong>Use Cases:</strong></p>
+                        <ul>
+                            <li><strong>Storytelling:</strong> Create a sequence of bookmarks to guide users through a data narrative (use "View" mode in the Bookmarks pane).</li>
+                            <li><strong>Navigation:</strong> Assign bookmarks to buttons, shapes, or images to create custom navigation experiences within or between report pages.</li>
+                            <li><strong>Saving Personal Views:</strong> Users can create personal bookmarks (if enabled) to save their preferred filter states.</li>
+                            <li><strong>Resetting Filters:</strong> A bookmark can capture a default (unfiltered) state to act as a "Reset Filters" button.</li>
+                        </ul>
+                        <p><strong>Key Options when creating a bookmark:</strong> Choose whether to capture Data (filters), Display (visual visibility), Current Page, or All visuals / Selected visuals.</p>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title">Conditional Formatting Techniques</h4>
+                    <div class="details-content text-sm">
+                        <p>Conditional formatting applies formatting (colors, icons, data bars) to visuals based on data values or rules, making it easier to spot trends, outliers, and key insights.</p>
+                        <p>Available for many visuals, especially tables, matrices, and some charts.</p>
+                        <p><strong>Common Techniques:</strong></p>
+                        <ul>
+                            <li><strong>Background color / Font color scales:</strong> Apply a color gradient based on values (e.g., low sales in red, high in green).</li>
+                            <li><strong>Data Bars:</strong> Add bars within table/matrix cells to visually represent magnitude.</li>
+                            <li><strong>Icons:</strong> Display icons (e.g., up/down arrows, traffic lights) based on rules or KPI status.</li>
+                            <li><strong>Format by Rules:</strong> Define specific rules (e.g., IF value > X THEN color = Green).</li>
+                            <li><strong>Format by Field Value:</strong> Use a measure that returns a color name or hex code to dynamically set colors.</li>
+                        </ul>
+                        <p>Access conditional formatting options in the Format pane for a selected visual, typically under "Cell elements" (for tables/matrices) or specific data color options.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="exam-tip">
+                <p><strong>Exam Tip:</strong> Understand how to configure visual interactions and drill-through. Know the purpose of bookmarks for navigation and storytelling. Be familiar with common conditional formatting types (data bars, icons, color scales) and how they enhance data interpretation.</p>
+            </div>
+        </section>
+
+        <section id="accessibility" class="content-section mb-16">
+            <h2 class="section-title">Accessibility and Usability Considerations</h2>
+            <p class="section-intro-text">Designing reports that are accessible to all users, including those with disabilities, and are generally easy to use is a critical aspect of a Power BI Data Analyst's role.</p>
+            <div class="sub-topic-grid grid-cols-1">
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title">Designing for Accessibility & Usability</h4>
+                    <div class="details-content text-sm">
+                        <p><strong>Key Accessibility Principles (WCAG - Web Content Accessibility Guidelines):</strong></p>
+                        <ul>
+                            <li><strong>Perceivable:</strong> Information and user interface components must be presentable to users in ways they can perceive.
+                                <ul>
+                                    <li>Provide text alternatives (alt text) for non-text content like images.</li>
+                                    <li>Ensure sufficient color contrast between text and background (use tools to check contrast ratios).</li>
+                                    <li>Don't rely on color alone to convey information. Use labels, icons, or patterns.</li>
+                                </ul>
+                            </li>
+                            <li><strong>Operable:</strong> User interface components and navigation must be operable.
+                                <ul>
+                                    <li>Ensure keyboard navigability for all interactive elements (slicers, buttons, visuals). Set tab order.</li>
+                                    <li>Avoid content that flashes or blinks rapidly.</li>
+                                </ul>
+                            </li>
+                            <li><strong>Understandable:</strong> Information and the operation of user interface must be understandable.
+                                <ul>
+                                    <li>Use clear and concise language. Provide clear titles for visuals and pages.</li>
+                                    <li>Maintain consistent navigation and layout.</li>
+                                </ul>
+                            </li>
+                            <li><strong>Robust:</strong> Content must be robust enough that it can be interpreted reliably by a wide variety of user agents, including assistive technologies (e.g., screen readers).
+                                <ul>
+                                    <li>Use semantic HTML where possible (Power BI handles much of this).</li>
+                                </ul>
+                            </li>
+                        </ul>
+                        <p class="mt-2"><strong>Power BI Specific Accessibility Features:</strong></p>
+                        <ul>
+                            <li><strong>Alt Text for Visuals:</strong> Set in the Format pane -> General -> Alt text.</li>
+                            <li><strong>Tab Order:</strong> Set the navigation order for keyboard users (View tab -> Selection pane -> Tab order).</li>
+                            <li><strong>Report Themes:</strong> Choose themes with good color contrast or customize colors.</li>
+                            <li><strong>Show Data Table:</strong> Allows users to see the data behind a visual in a tabular format (accessible to screen readers).</li>
+                            <li>Support for high contrast modes in Windows.</li>
+                        </ul>
+                        <p class="mt-2"><strong>General Usability Best Practices:</strong></p>
+                        <ul>
+                            <li>Keep reports uncluttered and focused.</li>
+                            <li>Use clear titles and labels.</li>
+                            <li>Provide context and explanations where needed.</li>
+                            <li>Ensure consistent design across report pages.</li>
+                            <li>Test your reports with different users if possible.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="exam-tip">
+                <p><strong>Exam Tip:</strong> Understand the importance of providing alt text, ensuring good color contrast, and setting tab order. Be aware that accessibility is about making reports usable by people with a wide range of abilities.</p>
+            </div>
+        </section>
+
+        <footer class="text-center mt-12 py-8 border-t border-slate-200">
+            <p class="text-slate-600">&copy; <span id="currentYear"></span> Revature - PL-300 Certification Preparation. All rights reserved.</p>
+        </footer>
+
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+            // Smooth scrolling for nav links
+            document.querySelectorAll('nav a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({ behavior: 'smooth' });
+                    }
+                });
+            });
+
+            // Setup for expandable cards
+            function setupExpandableCards() {
+                const sections = document.querySelectorAll('.content-section');
+                sections.forEach(section => {
+                    const cards = section.querySelectorAll('.sub-topic-card');
+                    cards.forEach(card => {
+                        const titleElement = card.querySelector('.sub-topic-card-title');
+                        const details = card.querySelector('.details-content');
+
+                        if (titleElement && details) {
+                            details.style.display = 'none'; 
+                            titleElement.addEventListener('click', () => {
+                                const isHidden = details.style.display === 'none';
+                                cards.forEach(otherCard => {
+                                    if (otherCard !== card) {
+                                        const otherDetails = otherCard.querySelector('.details-content');
+                                        if (otherDetails) otherDetails.style.display = 'none';
+                                        otherCard.classList.remove('active-item');
+                                    }
+                                });
+                                details.style.display = isHidden ? 'block' : 'none';
+                                if (isHidden) {
+                                    card.classList.add('active-item');
+                                } else {
+                                    card.classList.remove('active-item');
+                                }
+                            });
+                        }
+                    });
+                });
+            }
+            setupExpandableCards();
+        });
+    </script>
+</body>
+</html>
