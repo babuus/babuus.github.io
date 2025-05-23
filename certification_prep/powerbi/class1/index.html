@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PL-300 Cert Prep: Class 1 - Data Preparation & Profiling</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Visualization & Content Choices: 
+        - Connecting to Sources: Goal: Explain connection methods. Method: Grid of clickable cards for source types, connectors, auth. Lib: HTML/CSS/JS. Content expanded for clarity.
+        - Power Query Editor: Goal: Detail transformations. Method: Grid of clickable cards for advanced transformations, applied steps, query folding. Lib: HTML/CSS/JS. Content expanded for clarity.
+        - Data Profiling/Cleansing: Goal: Explain strategies. Method: Grid of clickable cards for profiling tools, handling errors, data type management. Lib: HTML/CSS/JS. Content expanded for clarity.
+        - Footer: Static content.
+        - No charts needed; focus on interactive text. All AI features removed. Layout updated for sub-topics to be individual cards in a grid. Styles enhanced for better visual appeal and readability.
+    -->
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #f1f5f9; /* slate-100, slightly different for base */
+        }
+        .container {
+            max-width: 1200px; /* Increased max-width for better content layout on larger screens */
+        }
+        .section-title { 
+            font-size: 2rem; /* Increased size */
+            font-weight: 700; /* Bolder */
+            margin-bottom: 1rem; 
+            color: #0284c7; /* sky-600, slightly brighter */
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #0ea5e9; /* sky-500 */
+            display: inline-block; /* To make border only as wide as text */
+        }
+        .section-intro-text { 
+            margin-bottom: 2rem; /* Increased spacing */
+            color: #475569; /* slate-600 */
+            font-size: 1.125rem; /* text-lg */
+            line-height: 1.75;
+        }
+        
+        .sub-topic-grid { 
+            display: grid; 
+            gap: 1.5rem; /* gap-6 */
+        }
+        
+        .sub-topic-card { 
+            background-color: white; 
+            border-radius: 0.75rem; /* rounded-xl for a softer look */
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.05); /* Softer shadow */
+            padding: 1.5rem; /* p-6 */
+            border: 1px solid #e2e8f0; /* slate-200 */
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .sub-topic-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.07), 0 4px 6px -4px rgba(0,0,0,0.07);
+        }
+        .sub-topic-card-title { 
+            font-size: 1.25rem; /* text-xl, slightly larger */
+            font-weight: 600; 
+            color: #075985; /* sky-800 */
+            margin-bottom: 0.5rem; /* mb-2 */
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .sub-topic-card-title::after { /* Adding an indicator for expand/collapse */
+            content: '▼'; /* Down arrow */
+            font-size: 0.8em;
+            color: #94a3b8; /* slate-400 */
+            transition: transform 0.3s ease;
+        }
+        .sub-topic-card.active-item .sub-topic-card-title::after {
+            transform: rotate(180deg); /* Up arrow */
+        }
+         .sub-topic-card.active-item {
+            border-left: 5px solid #0ea5e9; /* sky-500, thicker border */
+            background-color: #f7fafc; /* slightly off-white for active */
+        }
+        .details-content { 
+            display: none; 
+            margin-top: 1rem; /* mt-4 */
+            padding: 1.25rem; /* p-5, more padding */
+            background-color: #f8fafc; /* slate-50, for subtle contrast */
+            border-radius: 0.5rem; /* rounded-lg */
+            border: 1px solid #e2e8f0; /* slate-200 */
+            color: #334155; /* slate-700 */
+            line-height: 1.6;
+        }
+        .details-content p, .details-content ul {
+            margin-bottom: 0.75rem; /* mb-3 */
+        }
+        .details-content ul {
+            list-style-position: inside;
+            padding-left: 0.5rem; /* pl-2 */
+        }
+        .details-content strong {
+            color: #0369a1; /* sky-700 */
+        }
+
+        .exam-tip { 
+            background-color: #e0f2fe; /* sky-100, slightly different shade */
+            border-left: 5px solid #0ea5e9; /* sky-500 */ 
+            padding: 1.25rem; /* p-5 */
+            margin-top: 1.5rem; 
+            border-radius: 0.5rem; /* rounded-lg */
+            color: #0c4a6e; /* sky-800 */
+        }
+        .exam-tip p:last-child { margin-bottom: 0; }
+        .exam-tip strong { color: #0369a1; } /* sky-700 */
+
+
+        .nav-link { transition: color 0.3s, border-bottom-color 0.3s; padding-bottom: 0.25rem; }
+        .nav-link:hover { color: #0ea5e9; border-bottom: 2px solid #0ea5e9; } /* sky-500 */
+        .content-section { padding-top: 5rem; margin-top: -4.5rem; } /* Adjusted padding */
+        .code-snippet { 
+            background-color: #e2e8f0; /* slate-200 */
+            color: #1e293b; /* slate-800 */
+            padding: 0.25rem 0.5rem; 
+            border-radius: 0.25rem; /* rounded-md */
+            font-family: 'Courier New', Courier, monospace; 
+            font-size: 0.9em; 
+            border: 1px solid #cbd5e1; /* slate-300 */
+        }
+        .header-main {
+             background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%); /* sky-500 to sky-600 gradient */
+             padding: 2rem 0;
+             margin-bottom: 3rem; /* Increased spacing */
+             border-bottom-left-radius: 1rem;
+             border-bottom-right-radius: 1rem;
+        }
+        .header-main h1 {
+            color: white;
+            font-size: 2.5rem; /* text-4xl */
+        }
+         .header-main p {
+            color: #e0f2fe; /* sky-100 */
+            font-size: 1.125rem; /* text-lg */
+        }
+        .intro-card { /* Special styling for the intro card */
+            border-left: 5px solid #0ea5e9;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800">
+
+    <nav class="bg-white shadow-lg fixed w-full z-20 top-0">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" class="text-2xl font-bold text-sky-700">PL-300 Prep: Class 1</a>
+            <div class="space-x-2 sm:space-x-3 md:space-x-4 text-sm md:text-base">
+                <a href="#connecting-sources" class="nav-link text-slate-700">Connect</a>
+                <a href="#power-query" class="nav-link text-slate-700">Transform</a>
+                <a href="#data-profiling" class="nav-link text-slate-700">Profile</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="header-main">
+        <div class="container mx-auto px-6 text-center">
+            <h1 class="font-bold">Mastering Data Preparation & Profiling 🎯</h1>
+            <p class="mt-2">Interactive Guide for PL-300 Certification - Session 1</p>
+        </div>
+    </div>
+
+    <div class="container mx-auto px-6 py-8">
+
+        <section id="introduction-pl300-class1" class="mb-12 card intro-card">
+             <h2 class="section-title" style="font-size: 1.75rem; margin-bottom: 1rem; border-bottom: none; display: block;">Welcome to Session 1!</h2>
+             <p class="mb-4 text-slate-700 leading-relaxed">This first session is crucial for building a solid foundation in Power BI. We'll focus on ensuring your data is clean, efficiently structured, and well-understood before you even begin modeling or creating visualizations. Strong data preparation skills are essential for any Power BI Data Analyst.</p>
+             <p class="font-semibold text-slate-700">Today's Focus (30 mins):</p>
+             <ul class="list-disc list-inside ml-4 space-y-1 text-slate-600">
+                <li>Connecting to Diverse Data Sources: Recap & Nuances.</li>
+                <li>Shaping and Transforming Data with Power Query Editor.</li>
+                <li>Data Profiling and Cleansing Strategies.</li>
+             </ul>
+             <p class="mt-4 font-semibold text-sky-600">Let's get your data ready for analysis!</p>
+        </section>
+
+        <section id="connecting-sources" class="content-section mb-16">
+            <h2 class="section-title">Connecting to Diverse Data Sources</h2>
+            <p class="section-intro-text">Power BI offers a wide array of connectors to bring in data from various locations. Understanding these options, their capabilities, and how to connect securely is the first step in your data preparation journey.</p>
+            <div class="sub-topic-grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title">Identifying & Connecting to Sources</h4>
+                    <div class="details-content text-sm">
+                        <p>Power BI can ingest data from a multitude of sources. The key is to know where your data resides and how Power BI can access it:</p>
+                        <ul>
+                            <li><strong>Files:</strong> Ideal for static datasets or user-maintained data. Examples: Excel (<code class="code-snippet">.xlsx</code>), CSV (<code class="code-snippet">.csv</code>), JSON (<code class="code-snippet">.json</code>), PDF. You can connect to individual files or entire folders.</li>
+                            <li><strong>Databases:</strong> For structured data stored in relational or NoSQL systems. Examples: SQL Server, Oracle, PostgreSQL, Snowflake, Azure SQL Database. DirectQuery or Import modes are often available.</li>
+                            <li><strong>Power Platform:</strong> Seamless integration with Dataverse, existing Power BI datasets (for chained reports or composite models), and Dataflows (for reusable ETL logic).</li>
+                            <li><strong>Azure Services:</strong> Leverage Microsoft's cloud ecosystem. Examples: Azure Blob Storage (for files), Azure Data Lake Storage (for big data), Azure Synapse Analytics.</li>
+                            <li><strong>Online Services:</strong> Connect to SaaS applications and web platforms. Examples: SharePoint Online, Salesforce, Google Analytics, Dynamics 365. Often uses OAuth2 for authentication.</li>
+                            <li><strong>Other:</strong> The "Get Data" experience in Power BI Desktop provides a comprehensive list. Options like "Web" (for web pages or APIs returning data) and "OData Feed" are also common.</li>
+                        </ul>
+                        <p class="mt-2">The "Get Data" window is your central hub for initiating these connections.</p>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title">Choosing Connectors & Limitations</h4>
+                    <div class="details-content text-sm">
+                        <p>Selecting the right connector impacts performance and capabilities:</p>
+                        <ul>
+                            <li><strong>Native Connectors:</strong> These are specifically built for a data source and generally offer the best performance, feature support, and potential for query folding. Always prefer a native connector if available.</li>
+                            <li><strong>Generic Connectors (ODBC/OLE DB):</strong> Use these when a native connector isn't available. They provide a standard interface but might have limited functionality (e.g., no query folding, fewer supported data types) and potentially slower performance.</li>
+                            <li><strong>Web Connector:</strong> Versatile for APIs or web page tables. However, the stability depends on the web source's structure. The "Add Table Using Examples" feature can be helpful for unstructured web data.</li>
+                        </ul>
+                        <p class="mt-2"><strong>Key Limitations to Consider:</strong></p>
+                        <ul>
+                            <li><strong>Query Folding:</strong> Not all connectors or operations support query folding. This means transformations might be processed locally by Power Query, which can be slower.</li>
+                            <li><strong>Authentication:</strong> Supported methods vary. Some older systems might only support basic authentication.</li>
+                            <li><strong>Data Types:</strong> Ensure the connector correctly interprets source data types.</li>
+                            <li><strong>API Limits:</strong> Online services often have API rate limits that can affect large data refreshes.</li>
+                        </ul>
+                        <p class="mt-2">Always consult the official Microsoft documentation for the most up-to-date details on specific connectors.</p>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title">Authentication & Security Considerations</h4>
+                    <div class="details-content text-sm">
+                        <p>Securely accessing your data is paramount. Power BI supports various authentication methods:</p>
+                        <ul>
+                            <li><strong>Anonymous:</strong> For publicly accessible data.</li>
+                            <li><strong>Basic (Username/Password):</strong> Use with extreme caution, ensuring the connection is encrypted (HTTPS).</li>
+                            <li><strong>Windows Authentication:</strong> Leverages current user's Windows credentials or allows specifying alternate credentials. Common for on-premises SQL Server.</li>
+                            <li><strong>Database Authentication:</strong> Uses credentials specific to the database system.</li>
+                            <li><strong>Microsoft Account / Organizational Account (OAuth2):</strong> Standard for Microsoft cloud services (Azure, SharePoint, Dynamics 365). Redirects to a sign-in page.</li>
+                            <li><strong>Web API Key:</strong> For services that secure access via an API key passed in the request.</li>
+                        </ul>
+                        <p class="mt-2"><strong>Important Security Practices:</strong></p>
+                        <ul>
+                            <li>Power BI encrypts stored credentials.</li>
+                            <li><strong>Privacy Levels</strong> (Public, Organizational, Private): Configure these carefully when combining data from multiple sources to prevent data from a private source being inadvertently sent to a public source during query folding.</li>
+                            <li><strong>On-Premises Data Gateway:</strong> Essential for the Power BI service to refresh datasets that use on-premises data sources. It acts as a secure bridge. Ensure it's updated and configured correctly.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="exam-tip">
+                <p><strong>Exam Tip:</strong> Be able to identify common data source categories (files, databases, Azure, online services). Understand the critical role of the on-premises data gateway for refreshing on-premises data. Recognize different authentication types and their typical use cases (e.g., Organizational account for Azure services).</p>
+            </div>
+        </section>
+
+        <section id="power-query" class="content-section mb-16">
+            <h2 class="section-title">Shaping and Transforming Data with Power Query Editor</h2>
+            <p class="section-intro-text">The Power Query Editor (accessed via "Transform data" in Power BI Desktop) is your primary tool for data wrangling. It allows you to clean, reshape, and combine data from various sources before it's loaded into the Power BI data model.</p>
+            <div class="sub-topic-grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title">Advanced Transformations</h4>
+                    <div class="details-content text-sm">
+                        <p>Power Query provides a rich set of UI-driven transformations, which translate to M language code behind the scenes:</p>
+                        <ul>
+                            <li><strong>Pivoting/Unpivoting:</strong> Pivoting turns rows into columns (e.g., attribute-value pairs into distinct columns for each attribute). Unpivoting does the reverse, turning columns into attribute-value rows, often used to normalize data.</li>
+                            <li><strong>Grouping (Group By):</strong> Aggregates data based on one or more columns. You can perform operations like Sum, Average, Count, Min, Max, or All Rows (to keep nested tables).</li>
+                            <li><strong>Merging (Joins):</strong> Combines data from two queries (tables) based on matching values in one or more columns. Supports various join kinds: Inner, Left Outer, Right Outer, Full Outer, Left Anti, Right Anti.</li>
+                            <li><strong>Appending:</strong> Stacks rows from two or more queries that have the same or similar column structures into a single query.</li>
+                            <li><strong>Custom Columns:</strong> Add new columns derived from existing data using M formulas. This includes conditional logic (<code class="code-snippet">if ... then ... else</code>), text manipulations, date calculations, etc.</li>
+                            <li><strong>Invoking Custom Functions:</strong> Create reusable M functions for complex or repetitive transformations and apply them to your queries.</li>
+                            <li><strong>Managing Parameters:</strong> Create parameters to make parts of your queries dynamic, allowing users to input values (e.g., server names, file paths, date ranges) without editing the M code directly.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title">Applied Steps & Query Folding</h4>
+                    <div class="details-content text-sm">
+                        <p><strong>Applied Steps Pane:</strong></p>
+                        <ul>
+                            <li>Lists every transformation you apply in sequential order.</li>
+                            <li>Allows you to select a step to see the data's state at that point.</li>
+                            <li>You can rename, delete, reorder (with caution), or edit the settings of most steps. This provides an excellent audit trail and makes debugging easier.</li>
+                        </ul>
+                        <p class="mt-2"><strong>Query Folding:</strong></p>
+                        <ul>
+                            <li>This is a critical performance feature. Power Query attempts to translate the M code generated by your transformations back into the native query language of the data source (e.g., SQL, OData query).</li>
+                            <li><strong>Benefit:</strong> If folding occurs, the transformations are executed by the source system, which is usually much more powerful and efficient than processing large amounts of data within Power BI's mashup engine. This reduces data transfer and refresh times.</li>
+                            <li><strong>How to Check:</strong> Right-click on the last applied step. If "View Native Query" is enabled (not greyed out), query folding is occurring up to that step.</li>
+                            <li><strong>What Breaks Folding:</strong> Certain transformations cannot be translated to the source language (e.g., adding an Index Column, using some complex M functions, transformations across sources with incompatible privacy levels). Once folding is broken, all subsequent steps are processed by the Power Query engine.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title">Best Practices for Efficient Queries</h4>
+                    <div class="details-content text-sm">
+                        <p>Writing efficient Power Query transformations is key to fast data refreshes and a responsive report design experience:</p>
+                        <ul>
+                            <li><strong>Filter Early, Filter Often:</strong> Remove unnecessary rows and columns as early as possible in your applied steps. This reduces the amount of data processed by subsequent steps and increases the likelihood of query folding.</li>
+                            <li><strong>Optimize Step Order:</strong> Perform filtering and column removal before complex operations like merges or group bys. Data type conversions should generally be done after cleaning.</li>
+                            <li><strong>Document Your Work:</strong> Rename steps in the "Applied Steps" pane to be descriptive. For very complex logic, use the Advanced Editor to add comments (<code class="code-snippet">// comment</code> or <code class="code-snippet">/* block comment */</code>) to your M code.</li>
+                            <li><strong>Disable "Auto date/time" (Global Option):</strong> Prevents Power BI from automatically creating hidden date hierarchy tables for every date field, which can simplify your model.</li>
+                            <li><strong>Use Native Query Sparingly:</strong> While you can write native SQL queries for some sources, doing so can sometimes inhibit query folding for subsequent UI-driven steps. It also makes the query less portable.</li>
+                            <li><strong>Reference Queries:</strong> For common transformation sequences or base data, create a reference query. This promotes reusability and makes maintenance easier. Changes to the base query propagate to all referencing queries.</li>
+                            <li><strong>Query Diagnostics:</strong> Use the Query Diagnostics tools (under the Tools tab) to analyze the performance of your queries, identify slow steps, and understand data source interactions.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="exam-tip">
+                <p><strong>Exam Tip:</strong> Be very comfortable with Merge (different join types), Append, Group By, Pivot, and Unpivot. Understand what query folding is, why it's important for performance, and common reasons it might break. Applying best practices like filtering early is a common theme.</p>
+            </div>
+        </section>
+
+        <section id="data-profiling" class="content-section mb-16">
+            <h2 class="section-title">Data Profiling and Cleansing Strategies</h2>
+            <p class="section-intro-text">Data profiling is the process of examining the data available in an existing data source and collecting statistics and information about that data. This is crucial for identifying quality issues and planning cleansing activities.</p>
+            <div class="sub-topic-grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title">Using Data Profiling Tools</h4>
+                    <div class="details-content text-sm">
+                        <p>Power Query Editor provides several invaluable tools (found in the "View" tab) for understanding your data:</p>
+                        <ul>
+                            <li><strong>Column Quality:</strong> Provides a quick snapshot of data health for each column, showing percentages of:
+                                <ul>
+                                    <li><strong>Valid:</strong> Values that conform to the column's data type and have no errors.</li>
+                                    <li><strong>Error:</strong> Values that couldn't be converted to the column type or resulted from an operation error.</li>
+                                    <li><strong>Empty:</strong> Null values or empty strings.</li>
+                                </ul>
+                            </li>
+                            <li><strong>Column Distribution:</strong> Visualizes the frequency distribution of values in a selected column with a histogram. It also shows counts of <strong>Distinct</strong> values (number of different values) and <strong>Unique</strong> values (number of values that appear only once). Helps identify skewness and common values.</li>
+                            <li><strong>Column Profile:</strong> Offers a more detailed statistical summary for a single selected column, including:
+                                <ul>
+                                    <li>Value distribution chart (similar to Column Distribution).</li>
+                                    <li>Column statistics: Count, Error count, Empty count, Distinct count, Unique count, Min, Max, Average, Standard Deviation, Even/Odd counts (for numbers).</li>
+                                    <li>A list of all values and their frequencies.</li>
+                                </ul>
+                            </li>
+                        </ul>
+                        <p class="mt-2">By default, these tools profile the top 1,000 rows for performance reasons during design time. You can change this setting at the bottom status bar of the Power Query Editor to profile the entire dataset, but be mindful of potential slowdowns with very large datasets.</p>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title">Handling Errors, Inconsistencies, Missing Values</h4>
+                    <div class="details-content text-sm">
+                        <p>Once data issues are identified through profiling, Power Query offers various ways to cleanse them:</p>
+                        <p><strong>Handling Errors:</strong></p>
+                        <ul>
+                            <li><strong>Identify:</strong> Use "Column Quality" or filter a column for errors.</li>
+                            <li><strong>Options:</strong> Right-click the column header:
+                                <ul>
+                                    <li><code class="code-snippet">Replace Errors</code>: Substitute errors with a specific value (e.g., null, 0, "N/A", mean, median).</li>
+                                    <li><code class="code-snippet">Remove Errors</code>: Deletes entire rows containing an error in the selected column (use with caution as it causes data loss).</li>
+                                    <li><code class="code-snippet">Keep Errors</code>: Useful for isolating and investigating error rows.</li>
+                                </ul>
+                            </li>
+                        </ul>
+                        <p class="mt-2"><strong>Handling Inconsistencies (e.g., 'USA', 'U.S.A.', 'United States'):</strong></p>
+                        <ul>
+                            <li><strong>Identify:</strong> "Column Profile" value distribution, sorting the column.</li>
+                            <li><strong>Options:</strong> "Replace Values", "Trim" (remove leading/trailing whitespace), "Clean" (remove non-printable characters), "Format" (Lowercase, Uppercase, Capitalize Each Word), create Conditional Columns for complex replacements, or merge with a lookup/mapping table for standardization.</li>
+                        </ul>
+                         <p class="mt-2"><strong>Handling Missing Values (Nulls or Blanks):</strong></p>
+                        <ul>
+                            <li><strong>Identify:</strong> "Column Quality" (Empty count), filtering for nulls.</li>
+                            <li><strong>Options:</strong>
+                                <ul>
+                                    <li><code class="code-snippet">Replace Values</code>: Replace nulls with a specific value (e.g., 0 for numerical columns, "Unknown" for text).</li>
+                                    <li><code class="code-snippet">Fill Down / Fill Up</code>: Propagates the last/next non-null value to fill nulls in a column. Useful for data where values are only entered on change.</li>
+                                </ul>
+                                Always consider the analytical implication of how you handle missing data (imputation vs. removal).
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title">Data Type Management & Impact</h4>
+                    <div class="details-content text-sm">
+                        <p>Assigning the correct data type to each column is fundamental for data integrity and model performance.</p>
+                        <ul>
+                            <li><strong>Importance:</strong> Ensures accurate calculations, enables proper relationships between tables, optimizes storage in the Power BI model (VertiPaq engine), and improves report performance.</li>
+                            <li><strong>Setting Data Types:</strong> Click the data type icon in the column header or use the "Data Type" dropdown in the "Transform" or "Add Column" tabs.</li>
+                            <li><strong>Common Types:</strong> Text, Whole Number, Decimal Number, True/False (Boolean), Date, Date/Time, Date/Time/Timezone, Duration, Percentage, Binary.</li>
+                            <li><strong>"Using Locale":</strong> Crucial when converting text to dates or numbers if the source data uses a regional format different from your system's default (e.g., 'dd/MM/yyyy' vs. 'MM/dd/yyyy'). This ensures correct parsing.</li>
+                        </ul>
+                        <p class="mt-2"><strong>Impact of Incorrect Data Types:</strong></p>
+                        <ul>
+                            <li>Arithmetic errors if text is treated as a number or vice-versa.</li>
+                            <li>Inability to create relationships or incorrect join behavior.</li>
+                            <li>Slower DAX calculations and report rendering due to implicit data type conversions.</li>
+                            <li>Visualizations might not display data correctly or offer appropriate aggregation options.</li>
+                        </ul>
+                        <p class="mt-2">It's a best practice to explicitly set data types as one of the final steps in Power Query after all cleaning, filtering, and structural transformations are complete.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="exam-tip">
+                <p><strong>Exam Tip:</strong> Know the three main data profiling tools (Column Quality, Distribution, Profile) and the kind of insights each provides. Be prepared for scenarios asking how to handle common data issues like errors, inconsistent text, or nulls. Understand why correct data types are critical and the purpose of "Using Locale."</p>
+            </div>
+        </section>
+
+        <footer class="text-center mt-12 py-8 border-t border-slate-200">
+            <p class="text-slate-600">&copy; <span id="currentYear"></span> Revature - PL-300 Certification Preparation. All rights reserved.</p>
+        </footer>
+
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+            // Smooth scrolling for nav links
+            document.querySelectorAll('nav a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({ behavior: 'smooth' });
+                    }
+                });
+            });
+
+            // Setup for expandable cards
+            function setupExpandableCards() {
+                const sections = document.querySelectorAll('.content-section');
+                sections.forEach(section => {
+                    const cards = section.querySelectorAll('.sub-topic-card');
+                    cards.forEach(card => {
+                        const titleElement = card.querySelector('.sub-topic-card-title');
+                        const details = card.querySelector('.details-content');
+
+                        if (titleElement && details) {
+                            details.style.display = 'none'; 
+                            titleElement.addEventListener('click', () => {
+                                const isHidden = details.style.display === 'none';
+                                cards.forEach(otherCard => {
+                                    if (otherCard !== card) {
+                                        const otherDetails = otherCard.querySelector('.details-content');
+                                        if (otherDetails) otherDetails.style.display = 'none';
+                                        otherCard.classList.remove('active-item');
+                                    }
+                                });
+                                details.style.display = isHidden ? 'block' : 'none';
+                                if (isHidden) {
+                                    card.classList.add('active-item');
+                                } else {
+                                    card.classList.remove('active-item');
+                                }
+                            });
+                        }
+                    });
+                });
+            }
+            setupExpandableCards();
+        });
+    </script>
+</body>
+</html>

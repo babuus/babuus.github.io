@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PL-300 Cert Prep: Class 2 - Data Modeling & Relationships</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Visualization & Content Choices: 
+        - Data Model Design: Goal: Explain schemas & relationships. Method: Grid of clickable cards for star/snowflake, dim/fact, cardinality, USERELATIONSHIP. Lib: HTML/CSS/JS.
+        - Calculated/Date Tables: Goal: Detail usage. Method: Grid of clickable cards for calculated tables (DAX), auto vs. custom date tables. Lib: HTML/CSS/JS.
+        - Model Optimization: Goal: Explain techniques. Method: Grid of clickable cards for reducing size, data type impact. Lib: HTML/CSS/JS.
+        - Footer: Static content.
+        - No charts needed; focus on interactive text. All AI features removed. Layout updated for sub-topics to be individual cards in a grid.
+    -->
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .section-title { font-size: 1.75rem; font-weight: 600; margin-bottom: 1rem; color: #0369a1; } /* sky-700 */
+        .section-intro-text { margin-bottom: 1.5rem; color: #334155; } /* slate-700 */
+        
+        .sub-topic-grid { display: grid; gap: 1.5rem; } /* gap-6 */
+        /* For md screens and up, use 2 columns for sections with 2 or 4 items, otherwise 1 or adjust as needed */
+        
+        .sub-topic-card { 
+            background-color: white; 
+            border-radius: 0.5rem; /* rounded-lg */
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); 
+            padding: 1.5rem; /* p-6 */
+            border: 1px solid #e5e7eb; /* border-gray-200 */
+        }
+        .sub-topic-card-title { 
+            font-size: 1.125rem; /* text-lg */
+            font-weight: 600; 
+            color: #075985; /* sky-800 */
+            margin-bottom: 0.75rem; /* mb-3 */
+            cursor: pointer;
+        }
+        .sub-topic-card.active-item {
+            border-left: 4px solid #0ea5e9; /* sky-500 */
+            background-color: #f0f9ff; /* sky-50 */
+        }
+        .details-content { 
+            display: none; 
+            margin-top: 1rem; /* mt-4 */
+            padding: 1rem; /* p-4 */
+            background-color: #f8fafc; /* slate-50 */
+            border-radius: 0.375rem; /* rounded-md */
+            border: 1px solid #e2e8f0; /* slate-200 */
+        }
+        .exam-tip { background-color: #f0f9ff; border-left: 4px solid #0ea5e9; padding: 1rem; margin-top: 1.5rem; border-radius: 0.25rem; } /* sky-100 border-sky-500 */
+        .exam-tip p { margin-bottom: 0.25rem; }
+
+        .nav-link { transition: color 0.3s; }
+        .nav-link:hover { color: #0ea5e9; } /* sky-500 */
+        .content-section { padding-top: 4.5rem; margin-top: -4.5rem; } /* Offset for fixed navbar */
+        .code-snippet { background-color: #eef2ff; color: #4338ca; padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-family: monospace; font-size: 0.9em; } /* indigo-100, indigo-700 */
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800">
+
+    <nav class="bg-white shadow-md fixed w-full z-10 top-0">
+        <div class="container mx-auto px-6 py-3 flex justify-between items-center">
+            <a href="#" class="text-xl font-semibold text-sky-700">PL-300 Prep: Class 2</a>
+            <div class="space-x-1 sm:space-x-2 md:space-x-3 text-xs sm:text-sm md:text-base">
+                <a href="#data-modeling-design" class="nav-link text-slate-700">Design</a>
+                <a href="#calculated-date-tables" class="nav-link text-slate-700">Calc/Date Tables</a>
+                <a href="#model-optimization" class="nav-link text-slate-700">Optimize</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-6 py-8 pt-20">
+
+        <header class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-sky-700">Advanced Data Modeling & Relationships 🔗</h1>
+            <p class="text-lg text-slate-600 mt-2">Interactive Guide for PL-300 Certification - Session 2</p>
+        </header>
+
+        <section id="introduction-pl300-class2" class="mb-12 card">
+             <h2 class="section-title" style="font-size: 1.5rem; margin-bottom: 1rem;">Welcome to Session 2!</h2>
+             <p class="mb-4 text-slate-700">Following our data preparation work, this session focuses on building robust, efficient, and performant data models in Power BI. A well-designed model is the backbone of any insightful report.</p>
+             <p class="font-semibold text-slate-700">Today's Focus (30 mins):</p>
+             <ul class="list-disc list-inside ml-4 space-y-1 text-slate-600">
+                <li>Designing and Implementing Data Models: Star schema, dimension/fact tables, relationships.</li>
+                <li>Understanding inactive relationships and USERELATIONSHIP.</li>
+                <li>Calculated Tables and Auto Date Tables.</li>
+                <li>Model Optimization and Performance.</li>
+             </ul>
+             <p class="mt-4 font-semibold text-sky-600">Let's structure your data for powerful analysis!</p>
+        </section>
+
+        <section id="data-modeling-design" class="content-section mb-12">
+            <h2 class="section-title">Designing and Implementing Data Models</h2>
+            <p class="section-intro-text">The structure of your data model significantly impacts report performance, DAX complexity, and overall usability.</p>
+            <div class="sub-topic-grid grid-cols-1 md:grid-cols-2">
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title">Star Schema vs. Snowflake Schema:</h4>
+                    <div class="details-content text-sm">
+                        <p><strong>Star Schema:</strong></p>
+                        <ul class="list-disc list-inside ml-4">
+                            <li>Consists of one central Fact table connected to multiple Dimension tables.</li>
+                            <li>Dimension tables are denormalized.</li>
+                            <li><strong>Pros:</strong> Simpler, better query performance, easier DAX. Generally recommended for Power BI.</li>
+                            <li><strong>Cons:</strong> Data redundancy in dimensions.</li>
+                        </ul>
+                        <p class="mt-2"><strong>Snowflake Schema:</strong></p>
+                        <ul class="list-disc list-inside ml-4">
+                            <li>Dimension tables are normalized into multiple related tables.</li>
+                            <li><strong>Pros:</strong> Less redundancy, smaller dimensions.</li>
+                            <li><strong>Cons:</strong> More complex, more joins, complex DAX. Less preferred for Power BI.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title">Dimension and Fact Tables: Best Practices:</h4>
+                    <div class="details-content text-sm">
+                        <p><strong>Dimension Tables (Context):</strong> Describe business entities (Products, Customers, Dates). Contain descriptive attributes. Wider, shallower. Unique key needed.</p>
+                        <p class="mt-2"><strong>Fact Tables (Measurements):</strong> Contain numeric measures (Sales Amount, Quantity). Contain foreign keys to dimensions. Narrower, deeper. Granularity is key.</p>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title">Creating and Managing Relationships:</h4>
+                    <div class="details-content text-sm">
+                        <p>Define how tables connect and filters propagate.</p>
+                        <p><strong>Cardinality:</strong> One-to-Many (1:*) is most common. Many-to-Many (*:*) requires care or a bridge table.</p>
+                        <p class="mt-2"><strong>Cross-filter Direction:</strong> 'Single' is default and usually best. 'Both' can cause ambiguity but is needed for specific scenarios.</p>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title">Inactive Relationships and USERELATIONSHIP:</h4>
+                    <div class="details-content text-sm">
+                        <p><strong>Inactive Relationships:</strong> Only one active path between two tables. Others are inactive (dotted line).</p>
+                        <p class="mt-2"><strong>USERELATIONSHIP (DAX):</strong> Activates an inactive relationship for a specific measure calculation, typically within <code class="code-snippet">CALCULATE</code>.</p>
+                        <p>Example: <code class="code-snippet">CALCULATE(SUM(Sales[Amount]), USERELATIONSHIP(Sales[ShipDateKey], 'Date'[DateKey]))</code></p>
+                    </div>
+                </div>
+            </div>
+            <div class="exam-tip">
+                <p class="font-semibold">Exam Tip:</p>
+                <p>Star schema is generally preferred. Understand dimension/fact roles, cardinalities, and USERELATIONSHIP for inactive paths.</p>
+            </div>
+        </section>
+
+        <section id="calculated-date-tables" class="content-section mb-12">
+            <h2 class="section-title">Calculated Tables and Auto Date Tables</h2>
+            <p class="section-intro-text">Calculated tables are created using DAX. Date tables are crucial for time intelligence.</p>
+            <div class="sub-topic-grid grid-cols-1 md:grid-cols-2">
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title">When and How to Use Calculated Tables:</h4>
+                    <div class="details-content text-sm">
+                        <p>Generated by DAX, computed at refresh, stored in model.</p>
+                        <p><strong>Use Cases:</strong> Role-playing dimensions, summary/helper tables, custom date tables (Power Query often better), scaffolding tables.</p>
+                        <p><strong>Create:</strong> Modeling tab -> New Table. Example: <code class="code-snippet">DistinctProducts = DISTINCT(Sales[ProductKey])</code>.</p>
+                        <p>Use judiciously (memory/refresh impact).</p>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title">Auto Date/Time vs. Custom Date Tables:</h4>
+                    <div class="details-content text-sm">
+                        <p><strong>Auto Date/Time (Built-in):</strong> Hidden date table per date column. Convenient but can clutter, less flexible.</p>
+                        <p class="mt-2"><strong>Custom Date Tables (Best Practice):</strong> Dedicated table with date attributes. Create in Power Query or DAX. Mark as "date table".</p>
+                        <p><strong>Pros:</strong> Single source of truth, full control, enables advanced time intelligence. Disable "Auto date/time" globally for this.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="exam-tip">
+                <p class="font-semibold">Exam Tip:</p>
+                <p>Calculated tables are DAX-driven. A custom, marked date table is best for time intelligence.</p>
+            </div>
+        </section>
+
+        <section id="model-optimization" class="content-section mb-12">
+            <h2 class="section-title">Model Optimization and Performance</h2>
+            <p class="section-intro-text">Optimizing your model is key for fast reports, DAX calculations, and efficient refreshes.</p>
+            <div class="sub-topic-grid grid-cols-1 md:grid-cols-2">
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title">Reducing Model Size:</h4>
+                    <div class="details-content text-sm">
+                        <p>Smaller models perform better.</p>
+                        <ul class="list-disc list-inside ml-4">
+                            <li>Remove unnecessary columns/rows (especially high cardinality columns).</li>
+                            <li>Summarize/aggregate in Power Query if full detail isn't needed.</li>
+                            <li>Disable "Auto date/time".</li>
+                            <li>Optimize data types.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="sub-topic-card">
+                    <h4 class="sub-topic-card-title">Impact of Data Types on Performance:</h4>
+                    <div class="details-content text-sm">
+                        <p>VertiPaq engine is optimized, but choices matter:</p>
+                        <ul class="list-disc list-inside ml-4">
+                            <li><strong>Numbers:</strong> Whole Number > Decimal Number if possible.</li>
+                            <li><strong>Text:</strong> High cardinality text is costly. Convert ID columns to integers if feasible.</li>
+                            <li><strong>Dates/Datetimes:</strong> Date type if time isn't needed.</li>
+                            <li>Set types explicitly in Power Query.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="exam-tip">
+                <p class="font-semibold">Exam Tip:</p>
+                <p>Reduce cardinality and column count to shrink model size. Use appropriate data types for size and speed.</p>
+            </div>
+        </section>
+
+        <footer class="text-center mt-12 py-8 border-t border-slate-200">
+            <p class="text-slate-600">&copy; <span id="currentYear"></span> Revature - PL-300 Certification Preparation. All rights reserved.</p>
+        </footer>
+
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+            // Smooth scrolling for nav links
+            document.querySelectorAll('nav a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({ behavior: 'smooth' });
+                    }
+                });
+            });
+
+            // Setup for expandable cards
+            function setupExpandableCards() {
+                const sections = document.querySelectorAll('.content-section'); // Iterate over main sections
+                sections.forEach(section => {
+                    const cards = section.querySelectorAll('.sub-topic-card');
+                    cards.forEach(card => {
+                        const titleElement = card.querySelector('.sub-topic-card-title');
+                        const details = card.querySelector('.details-content');
+
+                        if (titleElement && details) {
+                            details.style.display = 'none'; // Ensure initially hidden
+                            titleElement.addEventListener('click', () => {
+                                const isHidden = details.style.display === 'none';
+
+                                // Close other open cards within the same section's grid
+                                cards.forEach(otherCard => {
+                                    if (otherCard !== card) {
+                                        const otherDetails = otherCard.querySelector('.details-content');
+                                        if (otherDetails) otherDetails.style.display = 'none';
+                                        otherCard.classList.remove('active-item');
+                                    }
+                                });
+
+                                // Toggle current card
+                                details.style.display = isHidden ? 'block' : 'none';
+                                if (isHidden) {
+                                    card.classList.add('active-item');
+                                } else {
+                                    card.classList.remove('active-item');
+                                }
+                            });
+                        }
+                    });
+                });
+            }
+            setupExpandableCards();
+        });
+    </script>
+</body>
+</html>
